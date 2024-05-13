@@ -1,0 +1,128 @@
+{% extends 'layouts.html' %}
+{% set active_page = "db" %}
+
+
+{%block results%}
+
+
+<a href="{{url_for('db_purge',ndays=purge_backup_days)}}">
+    <button type="submit" class="btn btn-outline-warning"
+        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+        data-bs-toggle="tooltip" data-bs-placement="right" title="Delete old Backup">
+        <i class="bi bi-database-fill-x"> Delete Backups older than {{purge_backup_days}} days</i>
+    </button>
+</a>
+
+{%endblock results%}
+{%block pagination%}
+<form method="post" action="{{url_for('db_backup')}}">
+
+    <button type="submit" class="btn btn-outline-info"
+        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+        data-bs-toggle="tooltip" data-bs-placement="right" title="Create Backup Manually">
+        <i class="bi bi-database-fill-gear"> Manual Backup</i>
+    </button>
+</form>
+{%endblock pagination%}
+
+{% block content %}
+
+<style>
+    .items {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .item {
+        height: 100%;
+        margin: 4px;
+
+        width: 100%;
+        max-width: calc(33% - 8px);
+    }
+</style>
+
+<div class="row">
+
+    <div class="col-md-12">
+        <table class="table table-light table-hover linkfnt shadow-sm p-3 mb-5 bg-body rounded">
+            <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">File Name [size]</th>
+                    <th scope="col">Download Backup </th>
+                </tr>
+            </thead>
+            <tbody>
+                {%- for item in tree.children|sort(attribute='name',reverse=True) recursive%}
+                <tr>
+                    <td>{{ item.backup_date}}</td>
+                    <td>{{item.name}} <mark>[ {{ item.size }} ]</mark></td>
+                    <td>
+                        <a href="{{url_for('static',filename='dbbackup/'+item.name)}}">
+                            <button type="button" class="btn btn-outline-success linkfnt " data-bs-toggle="tooltip"
+                                data-bs-placement="right" title="Download Backup: {{item.name}}">
+                                <i class="bi bi-cloud-download">
+                                    <!-- {%if item.size %}
+                                    <span class="badge rounded-pill text-bg-secondary">{{ item.size }}</span>
+                                    {%endif%} -->
+                                </i>
+                            </button>
+                        </a>
+
+                    </td>
+
+                </tr>
+                {%endfor%}
+
+            </tbody>
+        </table>
+
+        <!-- <div class="container text-center">
+            <div class="row">
+                <div class="col-sm-8">
+                    <h4 style="float: left;">{{ tree.name }}</h4>
+                    <ul>
+                        <div class="items linkfnt">
+
+                            {%- for item in tree.children recursive %}
+                            <div class="item linkfnt">
+                                <a href="{{url_for('static',filename='dbbackup/'+item.name)}}">
+                                    <button type="button" class="btn btn-outline-success linkfnt "
+                                        data-bs-toggle="tooltip" data-bs-placement="right"
+                                        title="Download Backup: {{item.name}}">
+                                        <i class="bi bi-cloud-download">&nbsp;{{ item.backup_date}}&nbsp;
+                                            {%if item.size %}
+                                            <span class="badge rounded-pill text-bg-secondary">{{ item.size }}</span>
+                                            {%endif%}</i>
+                                    </button>
+                                </a>
+                            </div>
+                            {%endfor%}
+
+                        </div> -->
+        <!-- {%- for item in tree.children recursive %}
+            
+            
+                <li>
+                   
+                     {{ item.name }} 
+                {%- if item.children -%}
+                    <ul><a href="#">{{ loop(item.children) }} {{ loop(item.size) }}</a></ul>
+                {%- endif %}</li>
+            {%- endfor %} -->
+        </ul>
+    </div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+{% endblock %}

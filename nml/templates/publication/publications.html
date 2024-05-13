@@ -1,0 +1,114 @@
+{%extends 'dataset-layout.html'%}
+{% set active_page = "publication" %}
+{% set left_edge, right_edge, left_current, right_current = search_options %}
+
+{%block results%}
+
+
+<span style="float: right;">
+
+  <!-- geocoder call-->
+  <script src="{{url_for('static',filename='js/location.js')}}"></script>
+
+  
+    <button disabled type="button" class="btn btn-sm btn-dark position-relative">
+      All Publications
+      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
+        {{get_count}}
+        <span class="visually-hidden">unread messages</span>
+      </span>
+    </button>
+</span>
+</p>
+{%endblock results%}
+
+
+
+{%block content%}
+
+<div class="container-fluid linkfnt">
+
+  <!-- <form class="d-flex" role="search" method="GET" action="{{url_for('pubsearch')}}">
+    {{ form.hidden_tag() }}
+    <input class="form-control form-control-sm me-2" type="search" style="width:120px;" placeholder="Search"
+      name="search_term" aria-label="Search">
+    <button class="btn btn-sm btn-outline-success" type="submit" data-bs-toggle="tooltip" data-bs-placement="bottom"
+      title="Search"><i class="bi bi-search"></i></button>
+  </form> -->
+
+  <table id="myTable" class="table table-striped table-light table-hover table-responsive  shadow-sm p-3 mb-5 bg-body rounded">
+    <thead>
+      <tr>
+        <th scope="col">Title</th>
+        <th scope="col">Author</th>
+        <th scope="col">Publisher</th>
+        <th scope="col">ISBN</th>
+        <!-- <th scope="col">Accession Number</th> -->
+        <!-- <th scope="col">Editor</th> -->
+        <th scope="col">Language</th>
+        <th scope="col">Year</th>
+        <th scope="col">Edition</th>
+        <th scope="col">Category</th>
+        <th scope="col">Library</th>
+        <!-- <th scope="col">Remarks</th> -->
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {%for item in show_details.items%}
+
+      <tr>
+        <td>{%if item.title%}<a
+            href="{{url_for('publication_details',id=item.id,pg=show_details.page)}}">{{item.title}}</a>{%endif%}</td>
+        <td>{%if item.author%}{{item.author}}{%endif%}</td>
+        <td>{%if item.publisher%}{{item.publisher}}{%endif%}</td>
+        <td>{%if item.isbn%}{{item.isbn}}{%endif%}</td>
+        <!-- <td>{%if item.acnum%}{{item.acnum}}{%endif%}</td> -->
+        <!-- <td>{%if item.editor%}{{item.editor}}{%endif%}</td> -->
+        <td>{%if item.language.id%}{{item.language.name}}{%endif%}</td>
+        <td>{%if item.year%}{{item.year}}{%endif%}</td>
+        <td>{%if item.edition%}{{item.edition}}{%endif%}</td>
+        <td>{%if item.category%}{{item.category}}{%endif%}</td>
+        <td>{%if item.library.id%}<img src="{{ url_for('static',filename='images/library/'+ item.library.image) }}"
+            width="40em" class="rounded mx-auto d-block" data-bs-toggle="tooltip" data-bs-placement="left"
+            title="{{item.library.name}}" alt="{{item.library.name}}"> {%endif%}</td>
+        <!-- <td>{%if item.remarks%}{{item.remarks}}{%endif%}</td> -->
+        <td>
+          <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+            <a href="{{url_for('publication_details',id=item.id,pg=show_details.page)}}">
+              <button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details"
+                class="btn btn-outline-success btn-sm">
+                <i class="bi bi-card-heading"></i>
+              </button></a>
+
+
+            {% if current_user.is_admin == true %}
+            <a href="{{url_for('edit_publication',id=item.id,pg=show_details.page)}}">
+              <button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Publication"
+                class="btn btn-outline-primary btn-sm">
+
+                <i class="bi bi-pencil-square"></i>
+              </button></a>
+
+              {% if current_user.username=='nirat' %}
+              <a href="{{url_for('publication_delete',id=item.id)}}"
+              onclick="return confirm('Are you sure you want to delete this entry?')">
+              <button type="button" data-bs-toggle="tooltip" data-bs-placement="right" title="Delete Publication"
+                class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-trash3-fill"></i>
+              </button></a> 
+               {%endif%}
+            
+            {%endif%}
+          </div>
+        </td>
+      </tr>
+
+      {%endfor%}
+    </tbody>
+  </table>
+
+
+  
+
+  {%endblock%}

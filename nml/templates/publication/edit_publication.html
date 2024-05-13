@@ -1,0 +1,90 @@
+{% extends 'layouts.html' %}
+{% set active_page = "publication" %}
+
+{% block content %}
+<style>
+  .items {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .item {
+    height: 100%;
+    margin: 4px;
+    width: 100%;
+    max-width: calc(33% - 4px);
+  }
+</style>
+
+
+<form method="POST" enctype="multipart/form-data">
+  <div class="container">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-xl-3">
+
+          {% if get_detail.image %}
+
+          <img src="{{ url_for('static',filename='uploads/publication/'+ get_detail.image) }}" width="250em"
+            class="img-thumbnail rounded mx-auto d-block">
+          {%else%}
+          <img src="{{ url_for('static',filename='images/library/not_found.png') }}" width="150em"
+            class="border border-secondary img-thumbnailrounded mx-auto d-block">
+          {%endif%}
+          <br>
+          {{form.image(class='linkfnt form-control')}}
+        </div>
+        <div class="col-xl-6 linkfnt">
+          <p class="fs-7">{{form.library.label}}:
+            <select class="form-select form-select-sm linkfnt" name="{{ form.library.name }}"
+              id="{{ form.library.id }}">
+              {% for ns, text in form.library.choices %}
+              <option value="{{ ns }}" {% if ns==form.library.default %} selected {% endif %}> {{ text }} </option>
+              {% endfor %}
+            </select>
+          </p>
+          <p class="fs-7">{{form.title.label}}: {{form.title(class='linkfnt form-control')}}</p>
+          <p class="fs-7">{{form.edition.label}}: {{form.edition(class='linkfnt form-control')}}</p>
+          <p class="fs-7">{{form.language.label}}:
+            <select class="form-select form-select-sm linkfnt" name="{{ form.language.name }}"
+              id="{{ form.language.id }}">
+              {% for ns, text in form.language.choices %}
+              <option value="{{ ns }}" {% if ns==form.language.default %} selected {% endif %}> {{ text }} </option>
+              {% endfor %}
+            </select>
+          </p>
+          <p class="fs-7">{{form.author.label}}: {{form.author(class='linkfnt form-control')}}</p>
+          <p class="fs-7">{{form.editor.label}}: {{form.editor(class='linkfnt form-control')}}</p>
+
+          <p class="fs-7">{{form.publisher.label}}: {{form.publisher(class='linkfnt form-control')}}</p>
+          <p>
+            {{form.remarks.label}}: {{form.remarks(class='linkfnt form-control',rows='5')}}
+          </p>
+          <p class="fs-7">{{form.year.label}}: {{form.year(class='linkfnt form-control')}}
+          </p>
+          <p>
+            {{form.isbn.label}}: {{form.isbn(class='linkfnt form-control')}}
+
+          </p>
+          <p>
+            {{form.category.label}}: {{form.category(class='linkfnt form-control')}}
+          </p>
+          {{form.submit(class='btn btn-primary linkfnt',value='Save')}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+            class="btn btn-outline-secondary btn-sm" href="{{request.referrer}}">Back</a>
+        </div>
+      </div>
+
+    </div>
+    <!-- <span class="linkfnt">
+    <p class="card-text" style="float: right">
+      <a  class="btn btn-outline-secondary btn-sm" href="{{request.referrer}}">Back</a>
+    </p>
+</span> -->
+
+
+  </div>
+</form>
+{% endblock %}

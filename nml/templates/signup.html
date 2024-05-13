@@ -1,0 +1,94 @@
+{% extends 'layouts.html' %}
+
+{% block contentA%}
+<div class="container w-25 shadow p-3 mb-5 bg-body rounded">
+    {% if current_user.is_active %}
+    active user
+
+    {%endif%}
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <div class="form-group">
+                {{ form.username.label(class='form-control-label') }}
+                {% if form.username.errors %}
+                {{ form.username(class='form-control form-control-sm is-invalid')}}
+                {% for error in form.username.errors %}
+                <span>{{error}}</span>
+                {%endfor%}
+                {%else%}
+                {{ form.username(class='form-control form-control-sm') }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.fullname.label(class='form-control-label') }}
+                {% if form.fullname.errors %}
+                {{ form.fullname(class='form-control form-control-sm is-invalid')}}
+                {% for error in form.fullname.errors %}
+                <span>{{error}}</span>
+                {%endfor%}
+                {%else%}
+                {{ form.fullname(class='form-control form-control-sm') }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.email.label(class='form-control-label') }}
+                {% if form.email.errors %}
+                {{ form.email(class='form-control form-control-sm is-invalid')}}
+                {% for error in form.email.errors %}
+                <span>{{error}}</span>
+                {%endfor%}
+                {%else%}
+                {{ form.email(class='form-control form-control-sm') }}
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.password.label(class='form-control-label') }}
+                {% if form.password.errors %}
+                {{ form.password(class='form-control form-control-sm is-invalid')}}
+                {% for error in form.password.errors %}
+                <span>{{error}}</span>
+                {%endfor%}
+                {%else%}
+                {{ form.password(class='form-control form-control-sm') }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.confirm_password.label(class='form-control-label') }}
+                {% if form.confirm_password.errors %}
+                {{ form.confirm_password(class='form-control form-control-sm is-invalid')}}
+                {% for error in form.confirm_password.errors %}
+                <span>{{error}}</span>
+                {%endfor%}
+                {%else%}
+
+                {{ form.confirm_password(class='form-control form-control-sm') }}
+                {% endif %}
+            </div>
+        </fieldset>
+        <div class="mb-3">
+            <div class="form-check form-switch">
+
+                {{ form.is_admin(class_="form-check-input")|safe }} {{ form.is_admin.label|safe }}
+
+            </div>
+        </div>
+        <div class="mb-3">
+            <div class="form-check form-switch">
+
+                {{ form.email_notify(class_="form-check-input")|safe }} {{ form.email_notify.label|safe }}
+
+            </div>
+        </div>
+        <div class="field-group">
+            <br>
+            {{form.submit(class='btn btn btn-primary')}}
+        </div>
+    </form>
+
+
+</div>
+
+
+{% endblock contentA %}

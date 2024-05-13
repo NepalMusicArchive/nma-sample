@@ -1,0 +1,307 @@
+{% extends 'layouts.html' %}
+{% set active_page = "collections" %}
+{% set left_edge, right_edge, left_current, right_current = search_options %}
+{% block pagination%}
+
+{% include 'pagination.html'%}
+{%endblock pagination%}
+
+{%block results%}
+<span style="float: right;">
+  <p class="linkfnt"> {{search_results.first }} - {{ search_results.last }} of {{ search_results.total }}
+
+    <button disabled type="button" class="btn btn-sm btn-dark position-relative">
+      {% if search_term %}
+      {{search_term}}
+      {%else%}
+      All Collections
+      {%endif%}
+      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
+        {{search_total}}
+        <span class="visually-hidden">unread messages</span>
+      </span>
+    </button>
+</span>
+
+</p>
+{%endblock results%}
+
+{% block contentA%}
+<!-- <div class="container w-75 linkfnt"> -->
+<div class="container w-100  linkfnt">
+  <div class="col-mb-6" style="border: 1px">
+
+
+
+
+    <!-- placeholder for ajax style search -->
+    <!-- <form class="d-flex" role="search" method="POST" action="{{url_for('search')}}">
+      {{ form.hidden_tag() }}
+      {{ form.search(class="form-control form-control-sm me-2") }}
+      {{form.submit(class="btn btn-sm btn-outline-success")}}
+      
+    </form> -->
+    </span>
+
+
+
+
+    {% if search_results %}
+
+
+    <table class="table table-striped table-light table-hover table-responsive shadow p-3 mb-5 bg-body rounded">
+      <thead>
+        <tr>
+          <!-- <th scope="col">Collection No.</th> -->
+          <th scope="col">Contributor</th>
+          <th scope="col">Media</th>
+          <th scope="col">Format</th>
+          <th scope="col">Title</th>
+          <th scope="col">Inscriptions</th>
+          <th scope="col">Digitized By</th>
+          <th scope="col">Filename</th>
+          <th scope="col"> Action </th>
+
+        </tr>
+      </thead>
+      <tbody>
+        {% for details in search_results.items %}
+        <tr>
+          <!-- <td> {%if details.collector.collectionid %} <a href="{{url_for('collection_detail',id=details.id,pg=search_results.page)}}">{{details.collector.collectionid}}</a>{%endif%} </td> -->
+          <td>{%if details.collector.collector %}{{details.collector.collector}} {%endif%} </td>
+          <td>{%if details.media.name %}{{details.media.name}}{%endif%}</td>
+          <td>{%if details.formats.name%}{{details.formats.name}}{%endif%} </td>
+          <td>{%if details.collection_title%}
+            {{details.collection_title}}
+            {%endif%} </td>
+          <td>{% if details.inscriptions%}
+            {% for inscription in details.inscriptions.splitlines() %}
+            {{ inscription| truncate(90)|safe|capitalize }}
+            {% endfor %}
+
+
+            {%endif%}</td>
+
+          <td>{% if details.user.fullname%}{{details.user.fullname}} {%endif%} </td>
+          <td class="user-select-all">{% if details.tagname%}{{details.tagname}} {%endif%}</td>
+
+          <td>
+
+            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+              {% if current_user.username==details.user.username or current_user.is_admin == true %}
+  
+              {%endif%}
+              <a href="{{url_for('collection_detail',id=details.id,pg=search_results.page)}}">
+                <button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details"
+                  class="btn btn-outline-success btn-sm btn-sm">
+                  <i class="bi bi-card-heading"></i>
+                </button></a>
+  
+  
+              {% if current_user.username==details.user.username or current_user.is_admin == true %}
+              <a href="{{url_for('edit_coll',id=details.id,pg=search_results.page)}}">
+                <button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Collection"
+                  class="btn btn-outline-primary btn-sm btn-sm">
+  
+                  <i class="bi bi-pencil-square"></i>
+                </button></a>
+              <!-- snippet for enabled/disabled per item-->
+  
+              <form action="{{url_for('active_inactives')}}" method="POST">
+                {{ form.csrf_token }}
+  
+                <input type="hidden" name="id" value="{{details.id}}" id="id">
+                <input type="hidden" name="search_term" value="{{search_term}}" id="search_term">
+                <input type="hidden" name="page_num" value=" {{search_results.page}}" id="page_num">
+                {% if details.activestate == True %}
+  
+                <button type="submit" name="status" value="public" class="btn btn-outline-warning btn-sm" data-bs-toggle="tooltip"
+                  data-bs-placement="right" title="Make Private">
+                  <i class="bi bi-eye"></i>
+                </button>
+                {%else%}
+  
+                <button type="submit" name="status" value="private" class="btn btn-outline-success btn-sm "
+                  data-bs-toggle="tooltip" data-bs-placement="right" title="Make Public">
+                  <i class="bi bi-eye-slash"></i>
+                </button>
+                {%endif%}
+  
+              </form>
+  
+              <!-- snippet for enabled/disabled per item end -->
+              {% if current_user.username=='nirat' %}
+               <a href="{{url_for('collection_delete',id=details.id)}}"
+                onclick="return confirm('Are you sure you want to delete this entry?')">
+                <button type="button" data-bs-toggle="tooltip" data-bs-placement="right" title="Delete Collection"
+                  class="btn btn-outline-danger btn-sm">
+                  <i class="bi bi-trash3-fill"></i>
+                </button></a> 
+                {%endif%}
+              {%endif%}
+  
+            </div>
+<!-- 
+            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+              <a href="{{url_for('collection_detail',id=details.id,pg=search_results.page)}}">
+                <button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details"
+                  class="btn btn-outline-secondary btn-sm">
+                  <i class="bi bi-file-binary"></i>
+                </button></a>
+
+
+              {% if current_user.username==details.user.username or current_user.is_admin == true %}
+              <a href="{{url_for('edit_coll',id=details.id,pg=search_results.page)}}">
+                <button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Collection"
+                  class="btn btn-outline-primary btn-sm">
+
+                  <i class="bi bi-pencil-square"></i>
+                </button></a>
+
+
+              <a href="{{url_for('collection_delete',id=details.id)}}"
+                onclick="return confirm('Are you sure you want to delete this entry?')">
+                <button type="button" data-bs-toggle="tooltip" data-bs-placement="right" title="Delete Collection"
+                  class="btn btn-outline-danger btn-sm">
+                  <i class="bi bi-trash3-fill"></i>
+                </button></a>
+              {%endif%}
+            </div> -->
+
+          </td>
+        </tr>
+        {%endfor%}
+      </tbody>
+    </table>
+    {% endif %}
+
+
+
+
+  </div>
+
+
+</div>
+
+
+{% endblock contentA %}
+
+{% block paginationbottom %}
+
+{% if search_results.iter_pages %}
+
+<nav aria-label="..." class="linkfnt">
+  <ul class="pagination  justify-content-center pagination-sm">
+    {% if search_results.has_prev %}
+    <li class="page-item ">
+      <a class="page-link" aria-label="Previous"
+        href="{{url_for('search',search_term=search_term,page_num=search_results.prev_num)}}"><span
+          aria-hidden="true">&laquo;</span></a>
+    </li>
+    {%else%}
+    <li class="page-item disabled">
+      <a class="page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+    </li>
+    {%endif%}
+
+    {% for page in
+    search_results.iter_pages(left_edge=left_edge,right_edge=right_edge,left_current=left_current,right_current=right_current)
+    %}
+    {%if page %}
+    {% if page == search_results.page %}
+    <li class="page-item active"><a class="page-link"
+        href="{{url_for('search',search_term=search_term,page_num=page)}}">{{page}}</a></li>
+    {%else%}
+    <li class="page-item"><a class="page-link"
+        href="{{url_for('search',search_term=search_term,page_num=page)}}">{{page}}</a></li>
+    {%endif%}
+    {%else%}
+    <li class="page-item disabled"><a href="#" class="page-link">...</a>
+    </li>
+
+    {%endif%}
+    {%endfor%}
+
+    {% if search_results.has_next %}
+    <li class="page-item">
+      <a class="page-link" aria-label="Next"
+        href="{{url_for('search',search_term=search_term,page_num=search_results.next_num)}}"> <span
+          aria-hidden="true">&raquo;</span></a>
+    </li>
+
+    {%else%}
+    <li class="page-item disabled">
+      <a class="page-link" aria-label="Next" href="#"> <span aria-hidden="true">&raquo;</span></a>
+
+    </li>
+
+    {%endif%}
+
+    {% if search_results.pages == search_results.page %}
+    {%set goto=search_results.prev_num%}
+    {%else%}
+    {%set goto=search_results.next_num%}
+    {%endif%}
+    &nbsp;
+    <div class="input-group mb-3" style="width:85px;">
+      {%if search_results .pages<=1 %} {%set goto=1%} <input type="text" name="pageskip" id="pageskip2"
+        class="form-control forn-control-sm linkfnt" disabled placeholder="Goto" aria-label="search_text"
+        aria-describedby="button-addon2" value="{{goto}}" style="width: 15pt;">
+        {%else%}
+        <input type="text" name="pageskip" id="pageskip2" class="form-control forn-control-sm linkfnt"
+          placeholder="Goto" aria-label="search_text" aria-describedby="button-addon2" value="{{goto}}"
+          style="width: 1pt;">
+        {%endif%}
+        <input type="hidden" name="q" id="q2" value={{search_term}}>
+
+        <button id="go-btn2" class="btn btn-outline-secondary btn-sm " style="width:25pt;" value="Go"
+          id="button-addon2">Go</button>
+
+    </div>
+
+
+
+
+  </ul>
+
+</nav>
+{%endif%}
+
+
+<script>
+
+  document.getElementById("pageskip").addEventListener("keyup", function (event) {
+    if (event.keyCode === 13) {
+      goToPage();
+    }
+  });
+  document.getElementById("go-btn").addEventListener("click", goToPage);
+
+  function goToPage() {
+    event.preventDefault();
+    var pageskip = document.getElementById('pageskip').value;
+    var q = document.getElementById('q').value;
+    var url = '/search?search_term=' + q + '&page_num=' + pageskip; // create the URL
+    var link = document.createElement('a');
+    link.href = url;
+    link.click();
+  }
+
+  document.getElementById("pageskip2").addEventListener("keyup", function (event) {
+    if (event.keyCode === 13) {
+      goToPage2();
+    }
+  });
+  document.getElementById("go-btn2").addEventListener("click", goToPage2);
+
+  function goToPage2() {
+    event.preventDefault();
+    var pageskip = document.getElementById('pageskip2').value;
+    var q = document.getElementById('q2').value;
+    var url = '/search?search_term=' + q + '&page_num=' + pageskip;
+    var link = document.createElement('a');
+    link.href = url;
+    link.click();
+  } 
+</script>
+{%endblock paginationbottom%}

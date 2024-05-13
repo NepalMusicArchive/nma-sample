@@ -1,0 +1,246 @@
+{% extends 'layouts.html' %}
+{% set active_page = "contributors" %}
+
+{%block results%}
+
+<span class="badge text-bg-success" style="padding: 5px;" data-bs-toggle="tooltip" data-bs-placement="right"
+  title="Agreement Done"><i class="bi bi-shield-lock"> {{agreement_users}} </i></span>
+<span class="badge text-bg-warning" style="padding: 5px;" data-bs-toggle="tooltip" data-bs-placement="right"
+  title="Agreement Pending"><i class="bi bi-shield-slash"> {{nagreement_users}} </i></span>
+<span class="badge text-bg-success" style="padding: 5px;" data-bs-toggle="tooltip" data-bs-placement="right"
+  title="Public Contributor"><i class="bi bi-eye"> {{enabled_contribs}} </i></span>
+<span class="badge text-bg-warning" style="padding: 5px;" data-bs-toggle="tooltip" data-bs-placement="right"
+  title="Private Contributor"><i class="bi bi-eye-slash"> {{disabled_contribs}} </i></span>
+
+
+
+{%endblock results%}
+{% block content %}
+
+<div class="row">
+
+
+  <!-- <div class="card border-dark mb-3" style="max-width: 10rem;">
+    <div class="card-header">001</div>
+    <div class="card-body">
+      <h5 class="card-title">Light card title</h5>
+      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+    </div>
+  </div>
+
+==================== -->
+
+  <div class="col col-md-10 linkfnt">
+
+
+    <table class="table table-striped table-light table-hover table-responsive  shadow-sm p-3 mb-5 bg-body rounded">
+      <thead>
+        <tr>
+          <th scope="row"></th>
+          <th scope="col">Agreement</th>
+          <th scope="col">Collection No.  <a href="{{ url_for('contributors', sort_by='collectionid', sort_order='asc') }}">
+            <i class="bi bi-caret-up-fill"></i></a>
+            <a href="{{ url_for('contributors', sort_by='collectionid', sort_order='desc') }}">
+            <i class="bi bi-caret-down-fill"></i></a>
+          </th>
+          <th scope="col">Contributor
+            <a href="{{ url_for('contributors', sort_by='collector', sort_order='asc') }}">
+              <i class="bi bi-caret-up-fill"></i></a>
+            <a href="{{ url_for('contributors', sort_by='collector', sort_order='desc') }}">
+              <i class="bi bi-caret-down-fill"></i></a>
+
+          </th>
+          <th scope="col">Contact Number</th>
+          <th scope="col">Email</th>
+
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        {% for row in collectors %}
+       
+        <tr>
+          <th scope="row">{{row.count}}</th>
+          {% set fid=0 %}
+          <td> {% if row.agreement==True%}
+            <span class="badge text-bg-success" style="padding: 5px;" data-bs-toggle="tooltip" data-bs-placement="top"
+              title="Agreement Done"><i class="bi bi-shield-lock"></i></span>
+
+            {%else%}
+            <span class="badge text-bg-warning" style="padding: 5px;" data-bs-toggle="tooltip" data-bs-placement="top"
+              title="Agreement Pending"><i class="bi bi-shield-slash"></i></span>
+            </button>
+            {%endif%}
+          </td>
+          <td>{{ row.collectionid }}</td>
+          <td><a href="{{ url_for('listbycollector',contributor_id=row.id,format_id=fid) }}">{{row.collector
+              }}</a> <span class="badge badge-pill bg-info text-dark" data-bs-toggle="tooltip" data-bs-placement="right"
+              title="Contributions">{{ record_counts.get(row.collector, 0) }}</span>  
+              {%if drecord_counts.get(row.collector,0) %}
+              <span class="badge badge-pill bg-warning text-dark" data-bs-toggle="tooltip" data-bs-placement="right"
+              title="Disabled Collections">{{ drecord_counts.get(row.collector,0) }}</span>
+              {%endif%}
+             
+              
+            </td>
+          <td>
+            {%if row.mobile%}
+            {{row.mobile }}
+            {%elif row.phone%}
+            {{row.phone}}
+            {%else%}
+            {%if row.secphone%}
+            {{row.secphone}} <br> ({{row.seccontact}})
+            {%endif%}
+            {%endif%}
+
+          </td>
+          <td>
+            {%if row.email %}
+            {{row.email }}
+            {%endif%}
+          </td>
+
+          <td>
+
+            <form action="{{url_for('active_inactive')}}" method="POST">
+              {{ form.csrf_token }}
+
+              <input type="hidden" name="id" value="{{row.id}}" id="id">
+              
+
+              <a href="{{url_for('contributors',id=row.id)}}">
+                <button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Contributor"
+                  class="btn btn-outline-primary btn-sm">
+
+                  <i class="bi bi-pencil-square"></i>
+                </button></a>
+
+                {% if row.activestate == True %}
+
+              <button type="submit" name="status" value="public" class="btn btn-outline-danger btn-sm" data-bs-toggle="tooltip"
+                data-bs-placement="right" title="Make Private">
+                <i class="bi bi-eye"></i>
+              </button>
+              {%else%}
+              <button type="submit" name="status" value="private" class="btn btn-outline-success btn-sm"
+                data-bs-toggle="tooltip" data-bs-placement="right" title="Make Public">
+                <i class="bi bi-eye-slash"></i>
+              </button>
+              {%endif%}
+              {% if current_user.username=='nirat' %}
+             <a href="{{url_for('collectordelete',id=row.id)}}"
+                onclick="return confirm('Are you sure you want to delete this contributor?')"><button type="button"
+                  class="btn btn-outline-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="right"
+                  title="Delete Contributor">
+                  <i class="bi bi-trash3-fill"></i>
+                </button></a> 
+                {%endif%}
+          </td>
+          </form>
+
+
+
+
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+
+  </div>
+
+
+  <div class="col col-lg-2 linkfnt shadow p-3 mb-5 bg-body rounded">
+
+    <strong>{% if id %}
+      Edit
+      {%else%}
+      Add
+      {%endif%}
+      Contributor </strong>
+    <form action="" method="POST">
+      {{ form.csrf_token }}
+
+      {% if not id %}
+      <div class="mb-2">
+        <label for="exampleInputEmail1" class="form-label">{{ form.collectionid.label }}</label>
+        {{ form.collectionid(size=3,class="form-control form-control-sm",value= new_id) }}
+      </div>
+      {%else%}
+      <label for="exampleInputEmail1" class="form-label">{{ form.collectionid.label }}</label>
+      {{ form.collectionid(size=3,readonly=true,class="form-control form-control-sm ",value= new_id) }}
+      {%endif%}
+      <div class="mb-2">
+        <label for="exampleInputPassword1" class="form-label">{{form.collector.label}}</label>
+        {{form.collector(class="form-control form-control-sm")}}
+        <label for="exampleInputPassword1" class="form-label">{{form.email.label}}</label>
+
+        {% if form.email.errors %}
+        {{ form.email(class='form-control form-control-sm is-invalid')}}
+        {% for error in form.email.errors %}
+        <span>{{error}}</span>
+        {%endfor%}
+        {%else%}
+        {{ form.email(class='form-control form-control-sm') }}
+        {% endif %}
+        <label for="exampleInputPassword1" class="form-label">{{form.phone.label}}</label>
+        {{form.phone(class="form-control form-control-sm")}}
+        <label for="exampleInputPassword1" class="form-label">{{form.mobile.label}}</label>
+        {{form.mobile(class="form-control form-control-sm")}}
+        <label for="exampleInputPassword1" class="form-label">{{form.address.label}}</label>
+        {{form.address(class="form-control form-control-sm",rows='2')}}
+        <label for="exampleInputPassword1" class="form-label">{{form.seccontact.label}}</label>
+        {{form.seccontact(class="form-control form-control-sm")}}
+        <label for="exampleInputPassword1" class="form-label">{{form.relation.label}}</label>
+        {{form.relation(class="form-control form-control-sm")}}
+        <label for="exampleInputPassword1" class="form-label">{{form.secphone.label}}</label>
+        {{form.secphone(class="form-control form-control-sm")}}
+        <label for="exampleInputPassword1" class="form-label">{{form.reference.label}}</label>
+        {{form.reference(class="form-control form-control-sm")}}
+        <p> {%if filter.agreement == True %}
+          {%set v=1%}
+          {%set ss="checked" %}
+
+          {%else %}
+          {%set v=0%}
+          {%set ss=""%}
+          {%endif%}
+
+        <div class="mb-3">
+
+          <!-- {% if current_user.is_admin == 1 %}
+          admin
+
+          {%else%}
+          arkai manche 
+          {%endif%}  -->
+          <div class="form-check form-switch">
+
+            <input class="form-check-input" type="checkbox" id="agreement" name="agreement" value="{{v}}" {{ss}}
+              id="flexCheckDefault">
+            {{form.agreement.label}}
+
+          </div>
+
+          <label for="exampleInputPassword1" class="form-label">{{form.remarks.label}}</label>
+          {{form.remarks(class="form-control form-control-sm",rows='3')}}
+
+        </div>
+
+        {% if id %}
+        {{form.submit(class="btn btn-primary btn-sm",value='Save')}}
+        {%else%}
+        {{form.submit(class="btn btn-primary btn-sm")}}
+        {%endif%}
+    </form>
+
+
+
+  </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'layouts.html' %}
+
+{%block content%}
+
+
+<form method="POST" id="form-library" enctype="multipart/form-data">
+  {{ form.csrf_token }}
+
+  <div class="mb-2">
+
+    <img src="{{ url_for('static',filename='images/library/'+  library.image) }}" width="150em"
+      class="rounded mx-auto d-block">
+
+  </div>
+  <div class="mb-2">
+    <label for="exampleInputPassword1" class="form-label">{{form.libraryname.label}}</label>
+    {{form.libraryname(class="form-control form-control-sm")}}
+
+    <label for="exampleInputPassword1" class="form-label">{{form.address.label}}</label>
+    {{form.address(class="form-control form-control-sm",rows='5')}}
+    <label for="exampleInputPassword1" class="form-label">{{form.contact.label}}</label>
+    {{form.contact(class="form-control form-control-sm")}}
+    <label for="exampleInputPassword1" class="form-label">{{form.librarian.label}}</label>
+    {{form.librarian(class="form-control form-control-sm")}}
+    <label for="exampleInputPassword1" class="form-label">{{form.image.label}}</label>
+    {{form.image(class="form-control form-control-sm")}}
+    <label for="exampleInputPassword1" class="form-label">{{form.map_coordinates.label}}</label>
+    {{form.map_coordinates(class="form-control form-control-sm")}}
+    {{ form.email.label(class='form-control-label') }}
+    {% if form.email.errors %}
+    {{ form.email(class='form-control form-control-sm is-invalid')}}
+    {% for error in form.email.errors %}
+    <span>{{error}}</span>
+    {%endfor%}
+    {%else%}
+    {{ form.email(class='form-control form-control-sm') }}
+    {% endif %}
+
+
+    <label for="exampleInputPassword1" class="form-label">{{form.website.label}}</label>
+    {{form.website(class="form-control form-control-sm")}}
+    <label for="exampleInputPassword1" class="form-label">{{form.hours.label}}</label>
+    {{form.hours(class="form-control form-control-sm",rows='5')}}
+  </div>
+
+  <button type="submit" class="btn btn-primary btn-sm">Add Library</button>
+</form>
+{%endblock content%}

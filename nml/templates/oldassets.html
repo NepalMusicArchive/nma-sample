@@ -1,0 +1,315 @@
+{% extends 'layouts.html' %}
+{% set active_page = "assets" %}
+
+{% block content %}
+
+<div class=" row shadow p-3 mb-5 bg-body rounded linkfnt">
+
+  <form method="POST" enctype="multipart/form-data">
+    {{ form.csrf_token }}
+    <div class="input-group mb-3 linkfnt">
+      <input type="hidden" name="user_id" value="{{current_user.id}}">
+      <span class="input-group-text linkfnt" id="basic-addon1">{{form.contributor.label}}</span>
+      <select class="form-select form-select-sm linkfnt" name="{{ form.contributor.name }}"
+        id="{{ form.contributor.id }}">
+        {% for value, label in form.contributor.choices %}
+        <option value="{{ value }}" {% if value==form.contributor.default %} selected {% endif %}> {{ label }} </option>
+        {% endfor %}
+      </select>
+    </div>
+    <p>
+    <div class="form-group row linkfnt">
+      <div class="col-sm-6">
+        <div class="input-group mb-2 linkfnt">
+          <span class="input-group-text linkfnt" id="basic-addon1">{{form.media_name.label}}</span>
+
+          <select class="form-select form-select-sm linkfnt" name="{{ form.media_name.name }}"
+            id="{{ form.media_name.id }}">
+            {% for value, label in form.media_name.choices %}
+            <option value="{{ value }}" {% if value==form.media_name.default %} selected {% endif %}> {{ label }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+      </div>
+      <div class="col-sm-6">
+        <div class="input-group mb-2 linkfnt">
+          <span class="input-group-text linkfnt" id="basic-addon1">{{form.format_name.label}}</span>
+          <select class="form-select form-select-sm linkfnt" name="{{ form.format_name.name }}"
+            id="{{ form.format_name.id }}">
+            {% for value, label in form.format_name.choices %}
+            <option value="{{ value }}" {% if value==form.format_name.default %} selected {% endif %}> {{ label }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+    </div>
+    </p>
+
+    <!-- additional input fields for publication details -->
+    <div id="additional_publication" class="bg-info p-1 text-dark bg-opacity-10" style="display: none;">
+      <p>
+        <strong>Additional information: </strong>
+      </p>
+      <p>
+      <div class="form-group row linkfnt">
+
+        <div class="col-sm-6">
+          <!-- <div class="input-group mb-3 linkfnt">
+                  <span class="input-group-text linkfnt" id="basic-addon1">{{form.company.label}}</span>
+                  {{form.company(class='form-select form-select-sm linkfnt')}}
+                </div> -->
+          <div class="col-sm-6">
+            <div class="input-group mb-3 linkfnt">
+              <span class="input-group-text linkfnt" id="basic-addon1">{{form.image1.label}}</span>
+              {{form.image1(class='form-control linkfnt')}}
+            </div>
+          </div>
+
+        </div>
+      </div>
+      </p>
+    </div>
+    
+      <p>
+    <!-- additional input fields for audio details -->
+    <div id="additional_audio" class="bg-warning p-1 text-dark bg-opacity-10" style="display: none;">
+      <p>
+        <strong>Additional information: </strong>
+      <div class="form-group row linkfnt">
+
+        <div class="col-sm-6">
+          <div class="input-group mb-2 linkfnt">
+            <span class="input-group-text linkfnt" id="basic-addon1">{{form.collection_title.label}}</span>
+            {{form.collection_title(class='input-group form-control
+            linkfnt',placeholder=form.collection_title.description)}}
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+          <div class="input-group mb-2 linkfnt">
+            <span class="input-group-text linkfnt" id="basic-addon1">{{form.artist.label}}</span>
+            {{form.artist(class='input-group form-control linkfnt')}}
+          </div>
+        </div>
+
+      </div>
+
+      </p>
+      <p>
+      <div class="form-group row linkfnt">
+        <div class="col-sm-6">
+          <div class="input-group mb-3 linkfnt">
+            <span class="input-group-text linkfnt" id="basic-addon1">{{form.language.label}}</span>
+            {{form.language(class='form-select form-select-sm linkfnt')}}
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="input-group mb-3 linkfnt">
+            <span class="input-group-text linkfnt" id="basic-addon1">{{form.genre.label}}</span>
+            {{form.genre(class='form-select form-select-sm linkfnt')}}
+          </div>
+        </div>
+      </div>
+
+
+      </p>
+      <p>
+      <div class="form-group row linkfnt">
+
+        <div class="col-sm-6">
+          <div class="input-group mb-3 linkfnt">
+            <span class="input-group-text linkfnt" id="basic-addon1">{{form.company.label}}</span>
+            {{form.company(class='form-select form-select-sm linkfnt')}}
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="input-group mb-3 linkfnt">
+            <span class="input-group-text linkfnt" id="basic-addon1">{{form.image.label}}</span>
+            {{form.image(class='form-control linkfnt')}}
+          </div>
+        </div>
+      </div>
+      </p>
+      <p>
+      <div class="form-group row linkfnt">
+        <div class="col-sm-4">
+          <div class="input-group mb-2 linkfnt">
+            <span class="input-group-text linkfnt" id="basic-addon1">{{form.release_date.label}}</span>
+            {{form.release_date(class='form-select form-select-sm linkfnt')}}
+          </div>
+        </div>
+
+        <div class="col-sm-4">
+          <div class="input-group mb-2 linkfnt">
+            <span class="input-group-text linkfnt" id="basic-addon1">{{form.release_month.label}}</span>
+            {{form.release_month(class='form-select form-select-sm linkfnt')}}
+          </div>
+
+        </div>
+
+        <div class="col-sm-4">
+          <div class="input-group mb-3 linkfnt">
+            <span class="input-group-text linkfnt" id="basic-addon1">{{form.release_year.label}}</span>
+            {{form.release_year(class='form-select form-select-sm linkfnt')}}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row linkfnt">
+
+        <div class="col-sm-6">
+          <div class="input-group mb-2 linkfnt">
+            <span class="input-group-text linkfnt" id="basic-addon1">{{form.location.label}}</span>
+            {{form.location(class='input-group form-control
+            linkfnt',placeholder=form.location.description)}}
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+          <div class="input-group mb-2 linkfnt">
+            <span class="input-group-text linkfnt" id="basic-addon1">{{form.audiofile.label}}</span>
+            {{form.audiofile(class='form-control linkfnt')}}
+          </div>
+        </div>
+
+      </div>
+      </p>
+    </div>
+    <p>
+
+
+    <div class="input-group mb-2 linkfnt">
+      <span class="input-group-text linkfnt">{{form.inscriptions.label}}</span>
+      {{form.inscriptions(rows='5',class='form-control linkfnt',placeholder=form.inscriptions.description)}}
+    </div>
+    <br>
+    <div class="input-group mb-2 linkfnt">
+      <span class="input-group-text linkfnt" id="basic-addon1">{{form.keywords.label}}</span>
+      {{form.keywords(rows='5',class='input-group form-control linkfnt',placeholder=form.keywords.description)}}
+    </div>
+
+    <div class="input-group  mb-3 linkfnt">
+      <span class="input-group-text linkfnt">{{form.notes.label}}</span>
+      {{form.notes(rows='5',class='form-control linkfnt',placeholder=form.notes.description)}}
+    </div>
+    <br>
+    {{form.submit(class='btn btn-primary linkfnt')}}
+
+</div>
+</p>
+</form>
+<p class="card-text" style="float: right">
+
+  <a class="btn btn-outline-secondary btn-sm" href="{{request.referrer}}">Back</a>
+</p>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  /* dynamic select of media / format in dropdowns*/
+  var media_name_select = document.getElementById("media_name");
+  var format_mame_select = document.getElementById("format_name");
+
+  media_name_select.onchange = function () {
+
+    media = media_name_select.value;
+    $("#additional_audio").hide();
+    $("#additional_publication").hide();
+    
+
+    fetch('/format/' + media).then(function (response) {
+       <!-- alert("test .. " + media);  -->
+       if ($("#media_name").val() == "1" || $("#media_name").val() == "2") {
+        $("#additional_audio").show();
+      } else {
+        $("#additional_audio").hide();
+
+      }
+      response.json().then(function (data) {
+        var optionHTML = '';
+
+        for (var format_mame_select of data.format_list) {
+          optionHTML += '<option value="' + format_mame_select.id + '">' + format_mame_select.name + '</option>';
+        }
+
+        format_name.innerHTML = optionHTML;
+      })
+      if ($("#media_name").val() == "1" || $("#media_name").val() == "2") {
+        $("#additional_audio").show();
+      } else {
+        $("#additional_audio").hide();
+
+      }
+
+    });
+  }
+
+  $(document).ready(function () {
+
+
+    $("#open").click(function () {
+      $.ajax({
+        url: '/record_company',
+        type: 'GET',
+        success: function (response) {
+          $("#target-div").html(response);
+        }
+      });
+    });
+
+    
+
+
+    /* select additional div on page load */
+    /* if format is cd , album cover, vinyl or cassette */
+    /*if ($("#format_name").val() == "1" || $("#format_name").val() == "10" || $("#format_name").val() == "12" || $("#format_name").val() == "14" || $("#format_name").val() == "3") {
+        $("#additional_publication").hide();
+    } else 
+    */
+    if ($("#format_name").val() == "8") { /* if format is publication*/
+      
+      $("#additional_publication").show();
+    } else {
+      
+      $("#additional_publication").hide();
+    }
+    if ($("#media_name").val() == "1" || $("#media_name").val() == "2") {
+      $("#additional_media").show();
+    } else {
+      $("#additional_media").hide();
+
+    }
+
+    /* select additional div on dropdown change */
+    $("#format_name").change(function () {
+      console.log($(this).val())
+      /* if format is cd , album cover, vinyl or cassette */
+      if ($(this).val() == "1" || $(this).val() == "10" || $(this).val() == "12" || $(this).val() == "14" || $(this).val() == "3") {
+        $("#additional_audio").show();
+        $("#additional_publication").hide();
+      } else if ($(this).val() == "8") { /* if format is publication*/
+        $("#additional_audio").hide();
+        $("#additional_publication").show();
+
+      } else {
+        $("#additional_audio").hide();
+        $("#additional_publication").hide();
+      }
+      if ($("#media_name").val() == "1" || $("#media_name").val() == "2") {
+        $("#additional_audio").show();
+      } else {
+        $("#additional_audio").hide();
+
+      }
+
+    });
+
+  });
+</script>
+</div>
+
+
+{% endblock %}

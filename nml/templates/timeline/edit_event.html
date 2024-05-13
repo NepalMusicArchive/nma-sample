@@ -1,0 +1,116 @@
+{% extends 'layouts.html' %}
+{% set active_page = "timeline" %}
+
+{%block pagination%}
+
+{%endblock pagination%}
+
+{% block content %}
+
+
+<form method="POST" enctype="multipart/form-data">
+  {{ form.csrf_token }}
+  <div class="container">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-6">
+          <p>
+          <div class="input-group mb-2 linkfnt">
+            <span class="input-group-text linkfnt" id="basic-addon1">{{form.title.label}}</span>
+            {{form.title(class='input-group form-control linkfnt',placeholder=form.title.description)}}
+          </div>
+          </p>
+
+          <p>
+          <div class="input-group mb-2 linkfnt">
+            <span class="input-group-text linkfnt" id="basic-addon1">{{form.group.label}}</span>
+            <select class="form-select form-select-sm linkfnt" name="{{ form.group.name }}" id="{{ form.group.id }}">
+              {% for ns, text in form.group.choices %}
+              <option value="{{ ns }}" {% if ns==form.group.default %} selected {% endif %}> {{ text }} </option>
+              {% endfor %}
+            </select>
+          </div>
+          </p>
+          <div class="row">
+            <div class="col-md-3">
+              <!-- <span class="input-group-text linkfnt" id="basic-addon1">{{form.release_date.label}}</span> -->
+              <select class="form-select form-select-sm linkfnt" name="{{ form.release_date.name }}"
+                id="{{ form.release_date.id }}">
+                {% for ns, text in form.release_date.choices %}
+
+                <!-- gen: {{ns}} - def: {{form.release_date.default}} -->
+                <option value="{{ ns }}" {% if ns==form.release_date.default %} selected {% endif %}> {{ text }}
+                </option>
+                {% endfor %}
+              </select>
+
+            </div>
+            <div class="col-md-4">
+              <!-- <span class="input-group-text linkfnt" id="basic-addon1">{{form.release_month.label}}</span> -->
+              <select class="form-select form-select-sm linkfnt" name="{{ form.release_month.name }}"
+                id="{{ form.release_month.id }}">
+                {% for value, label in form.release_month.choices %}
+                <option value="{{ value }}" {% if value==form.release_month.default %} selected {% endif %}> {{ label }}
+                </option>
+                {% endfor %}
+              </select>
+
+            </div>
+            <div class="col-md-4">
+              <!-- <span class="input-group-text linkfnt" id="basic-addon1">{{form.release_year.label}}</span> -->
+              <select class="form-select form-select-sm linkfnt" name="{{ form.release_year.name }}"
+                id="{{ form.release_year.id }}">
+                {% for ns, text in form.release_year.choices %}
+                <option value="{{ ns }}" {% if ns==form.release_year.default %} selected {% endif %}> {{ text }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+        </div>
+        <div class="col-xl-4">
+
+          <p>
+          <div class="input-group mb-3 linkfnt">
+            <span class="input-group-text linkfnt" id="basic-addon1">{{form.image.label}}</span>
+            {{form.image(class='form-control linkfnt')}}
+
+          </div>
+          </p>
+          <p>
+          <div class="input-group mb-4 linkfnt">
+            <span class="input-group-text linkfnt" id="basic-addon1">{{form.credit.label}}</span>
+            {{form.credit(class='input-group form-control linkfnt')}}
+          </div>
+          </p>
+          <div class="input-group mb-2 linkfnt">
+            <span class="input-group-text linkfnt" id="basic-addon1">{{form.description.label}}</span>
+
+            {{form.description(rows='5',class='input-group form-control linkfnt')}}
+          </div>
+        </div>
+        <div class="col-md-1">
+          <div class="col-2 container text-center linkfnt">
+            <!-- side content -->
+
+            {% if show_details.image %}
+
+            <img src="{{ url_for('static',filename='uploads/timeline/'+ show_details.image) }}" width="200"
+              class="rounded mx-auto d-block">
+
+            {%endif%}
+          </div>
+        </div>
+      </div>
+
+      {{form.submit(class='btn btn-primary linkfnt',value='Save')}}
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <p class="card-text" style="float: right">
+        <a class="btn btn-outline-secondary btn-sm" href="{{request.referrer}}">Back</a>
+      </p>
+    </div>
+  </div>
+
+</form>
+{% endblock %}

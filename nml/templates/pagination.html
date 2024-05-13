@@ -1,0 +1,74 @@
+{% if search_results.iter_pages %}
+
+<nav aria-label="..." class="linkfnt">
+  <ul class="pagination  justify-content-center pagination-sm">
+    {% if search_results.has_prev %}
+    <li class="page-item ">
+      <a class="page-link" aria-label="Previous"
+        href="{{url_for('search',search_term=search_term,page_num=search_results.prev_num)}}"><span
+          aria-hidden="true">&laquo;</span></a>
+    </li>
+    {%else%}
+    <li class="page-item disabled">
+      <a class="page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+    </li>
+    {%endif%}
+
+    {% for page in
+    search_results.iter_pages(left_edge=left_edge,right_edge=right_edge,left_current=left_current,right_current=right_current)
+    %}
+
+    {%if page %}
+    {% if page == search_results.page %}
+    <li class="page-item active"><a class="page-link"
+        href="{{url_for('search',search_term=search_term,page_num=page)}}">{{page}}</a></li>
+    {%else%}
+    <li class="page-item"><a class="page-link"
+        href="{{url_for('search',search_term=search_term,page_num=page)}}">{{page}}</a></li>
+    {%endif%}
+    {%else%}
+    <li class="page-item disabled"><a href="#" class="page-link">...</a>
+    </li>
+
+    {%endif%}
+    {%endfor%}
+
+    {% if search_results.has_next %}
+    <li class="page-item">
+      <a class="page-link" aria-label="Next"
+        href="{{url_for('search',search_term=search_term,page_num=search_results.next_num)}}"> <span
+          aria-hidden="true">&raquo;</span></a>
+    </li>
+    {%else%}
+    <li class="page-item disabled">
+      <a class="page-link" aria-label="Next" href="#"> <span aria-hidden="true">&raquo;</span></a>
+    </li>
+    {%endif%}
+
+    &nbsp;
+    <div class="input-group mb-3" style="width:95px;">
+      {% if search_results.pages == search_results.page %}
+      {%set goto=search_results.prev_num%}
+      {%else%}
+      {%set goto=search_results.next_num%}
+      {%endif%}
+
+      <div class="input-group mb-3" style="width:85px;">
+        {%if search_results.pages<=1 %} {%set goto=1%} <input type="text" name="pageskip" id="pageskip"
+          class="form-control forn-control-sm linkfnt" disabled placeholder="Goto" aria-label="search_text"
+          aria-describedby="button-addon2" value="{{goto}}" style="width: 15pt;">
+          {%else%}
+          <input type="text" name="pageskip" id="pageskip" class="form-control forn-control-sm linkfnt"
+            placeholder="Goto" aria-label="search_text" aria-describedby="button-addon2" value="{{goto}}"
+            style="width: 1pt;">
+          {%endif%}
+          <input type="hidden" name="q" id="q" value={{search_term}}>
+
+          <button id="go-btn" class="btn btn-outline-secondary btn-sm " style="width:25pt;" value="Go"
+            id="button-addon2">Go</button>
+
+      </div>
+
+  </ul>
+</nav>
+{%endif%}

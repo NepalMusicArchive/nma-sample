@@ -1,0 +1,27 @@
+{%extends 'layouts.html'%}
+{% set active_page = "timeline" %}
+{%block timeline %}
+
+<!-- {{get_timeline_items}} -->
+<!-- 1 -->
+<link title="timeline-styles" rel="stylesheet" href="https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css">
+
+
+<script src="https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js"></script>
+
+<div id='timeline-embed' style="width:100%; height:720px"></div>
+<!-- font: 'fjalla-average', -->
+<script type="text/javascript">
+   var additionalOptions = {
+      language: 'en',
+      font: 'fjalla-average',
+      scale_factor: '1',
+      timenav_position: 'bottom',
+      timenav_height_percentage: '40',
+      timenav_mobile_height_percentage: '1',
+      trackResize: 'false',
+   }
+   timeline = new TL.Timeline('timeline-embed', '/static/timeline/timeline.json', additionalOptions);
+</script>
+
+{%endblock timeline%}

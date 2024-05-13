@@ -1,0 +1,41 @@
+{% extends 'layouts.html' %}
+
+{% block contentA %}
+<div class="contentA">
+  <div class="card text-center  shadow p-3 mb-5 bg-body rounded">
+
+    <div class="card-body ">
+
+      <h2 class="card-title">Asset Management System</h2>
+      {% if current_user.is_authenticated %}
+      <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+      {%else%}
+      <a href="{{url_for('login')}}" class="btn btn-primary">Login</a>
+      {%endif%}
+
+      <br>
+
+    </div>
+
+  </div>
+</div>
+{% endblock contentA %}
+
+{% block contentC %}
+<!-- <div class="contentC">
+  <div class="card text-center">
+
+    <div class="card-body">
+      <br><br>
+      <h2 class="card-title">Special title treatment</h2>
+
+      <h3 class="card-text">New Line</h3>
+
+      <a href="#" class="btn btn-secondary">Go somewhere</a>
+      <br>
+      <h3 class="card-text">last Line</h3>
+    </div>
+
+  </div>
+</div> -->
+{% endblock contentC %}

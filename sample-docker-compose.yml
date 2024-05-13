@@ -1,0 +1,48 @@
+version: '3.3'
+services:
+  nmp:
+    #do not change these
+    image: im.nirat.com.np/nmp-project:latest
+    restart: always
+    container_name: nmpapp
+    volumes:
+      - ./docker/nml_data/db:/code/nml/db
+      - ./docker/db_backup:/code/nml/static/dbbackup/
+      - ./docker/nml_data/music:/code/nml/static/music/
+      - ./docker/nml_data/uploads:/code/nml/static/uploads/
+      - ./docker/nml_data/uploads/timeline:/code/nml/static/uploads/timeline
+      - ./docker/nml_data/uploads/publication:/code/nml/static/uploads/publication
+      - ./docker/nml_data/timeline:/code/nml/static/timeline
+    #do not change these
+
+
+    environment:
+      #do not change these
+      - UID=1000
+      - GID=1000
+      - TZ=Asia/Kathmandu
+      #do not change these
+#change these if needed
+      #session expiry time in seconds (s)
+      - USER_SESSION_TIME=3600
+      #search settings
+      - ITEMS_PER_PAGE=20
+      - LEFT_EDGE=1
+      - RIGHT_EDGE=1
+      - LEFT_CURRENT=2
+      - RIGHT_CURRENT=2
+      #number of days of DB backups to keep 
+      - PURGE_BACKUP_DAYS=7
+      #SMPT Settings
+      - MAIL_USERNAME="" #SMTP username : do not use "" if setting value
+      - MAIL_PASSWORD="" #SMTP username : do not use "" if setting value
+      #length of audio preview to stream milliseconds(ms)
+      - AUDIO_LENGTH=30000
+      #ntfy server settings https://ntfy.sh : for push notifications to users 
+      - NTFY_SERVER=""  #ntfy server name : do not use "" if setting value
+      - NTFY_SUBSCRITION="" #ntfy server subscription name : do not use "" if setting value
+#change these if needed
+
+    ports:
+      - '8080:8000'
+

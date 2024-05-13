@@ -1,0 +1,361 @@
+{% extends 'layouts.html' %}
+{% set active_page = "publication" %}
+{% set left_edge, right_edge, left_current, right_current = search_options %}
+{% block pagination%}
+
+{% if search_results.iter_pages %}
+
+<nav aria-label="..." class="linkfnt">
+  <ul class="pagination  justify-content-center pagination-sm">
+    {% if search_results.has_prev %}
+    <li class="page-item ">
+      <a class="page-link" aria-label="Previous"
+        href="{{url_for('pubsearch',search_term=search_term,page_num=search_results.prev_num)}}"><span
+          aria-hidden="true">&laquo;</span></a>
+    </li>
+    {%else%}
+    <li class="page-item disabled">
+      <a class="page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+    </li>
+    {%endif%}
+
+    {% for page in
+    search_results.iter_pages(left_edge=left_edge,right_edge=right_edge,left_current=left_current,right_current=right_current)
+    %}
+
+    {%if page %}
+    {% if page == search_results.page %}
+    <li class="page-item active"><a class="page-link"
+        href="{{url_for('pubsearch',search_term=search_term,page_num=page)}}">{{page}}</a></li>
+    {%else%}
+    <li class="page-item"><a class="page-link"
+        href="{{url_for('pubsearch',search_term=search_term,page_num=page)}}">{{page}}</a></li>
+    {%endif%}
+    {%else%}
+    <li class="page-item disabled"><a href="#" class="page-link">...</a>
+    </li>
+
+    {%endif%}
+    {%endfor%}
+
+    {% if search_results.has_next %}
+    <li class="page-item">
+      <a class="page-link" aria-label="Next"
+        href="{{url_for('pubsearch',search_term=search_term,page_num=search_results.next_num)}}"> <span
+          aria-hidden="true">&raquo;</span></a>
+    </li>
+    {%else%}
+    <li class="page-item disabled">
+      <a class="page-link" aria-label="Next" href="#"> <span aria-hidden="true">&raquo;</span></a>
+    </li>
+    {%endif%}
+
+    &nbsp;
+    <div class="input-group mb-3" style="width:95px;">
+      {% if search_results.pages == search_results.page %}
+      {%set goto=search_results.prev_num%}
+      {%else%}
+      {%set goto=search_results.next_num%}
+      {%endif%}
+
+      <div class="input-group mb-3" style="width:85px;">
+        {%if search_results.pages<=1 %} {%set goto=1%} <input type="text" name="pageskip" id="pageskip"
+          class="form-control forn-control-sm linkfnt" disabled placeholder="Goto" aria-label="search_text"
+          aria-describedby="button-addon2" value="{{goto}}" style="width: 15pt;">
+          {%else%}
+          <input type="text" name="pageskip" id="pageskip" class="form-control forn-control-sm linkfnt"
+            placeholder="Goto" aria-label="search_text" aria-describedby="button-addon2" value="{{goto}}"
+            style="width: 1pt;">
+          {%endif%}
+          <input type="hidden" name="q" id="q" value={{search_term}}>
+
+          <button id="go-btn" class="btn btn-outline-secondary btn-sm " style="width:25pt;" value="Go"
+            id="button-addon2">Go</button>
+
+      </div>
+
+  </ul>
+</nav>
+{%endif%}
+
+{%endblock pagination%}
+
+{%block results%}
+<span style="float: right;">
+  <p class="linkfnt"> {{search_results.first }} - {{ search_results.last }} of {{ search_results.total }}
+
+    <button disabled type="button" class="btn btn-sm btn-dark position-relative">
+      {% if search_term %}
+      {{search_term}}
+      {%else%}
+      All Publications
+      {%endif%}
+      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
+        {{search_total}}
+        <span class="visually-hidden">unread messages</span>
+      </span>
+    </button>
+</span>
+
+</p>
+{%endblock results%}
+
+{% block contentA%}
+
+<!-- <div class="container w-75 linkfnt"> -->
+<div class="container w-100  linkfnt">
+
+  <div class="col-mb-6" style="border: 1px">
+
+    <form class="d-flex" role="search" method="GET" action="{{url_for('pubsearch')}}">
+      {{ form.hidden_tag() }}
+      <input class="form-control form-control-sm me-2" type="search" style="width:120px;" placeholder="Search"
+        name="search_term" aria-label="Search">
+      <button class="btn btn-sm btn-outline-success" type="submit" data-bs-toggle="tooltip" data-bs-placement="bottom"
+        title="Search"><i class="bi bi-search"></i></button>
+    </form>
+
+
+    <!-- placeholder for ajax style search
+    <form class="d-flex" role="search" method="POST" action="{{url_for('pubsearch')}}">
+      {{ form.hidden_tag() }}
+      {{ form.search(class="form-control form-control-sm me-2") }}
+      {{form.submit(class="btn btn-sm btn-outline-success")}}
+      
+    </form> 
+  -->
+    </span>
+
+
+
+
+    {% if search_results %}
+
+    <table class="table table-striped table-light table-hover table-responsive shadow p-3 mb-5 bg-body rounded">
+      <thead>
+        <tr>
+          <th scope="col">Title</th>
+          <th scope="col">Author</th>
+          <th scope="col">Publisher</th>
+          <th scope="col">ISBN</th>
+          <th scope="col">Language</th>
+          <th scope="col">Year</th>
+          <th scope="col">Edition</th>
+          <th scope="col">Category</th>
+          <th scope="col">Library</th>
+          <th>Action</th>
+
+
+        </tr>
+      </thead>
+      <tbody>
+        {% for details in search_results.items %}
+        <tr>
+          <td>{%if details.title %}{{details.title}} {%endif%} </td>
+          <td>{%if details.author %}{{details.author}}{%endif%}</td>
+          <td>{%if details.publisher%}{{details.publisher}}{%endif%}</td>
+          <td>{%if details.isbn%}{{details.isbn}}{%endif%}</td>
+          <!-- <td>{%if details.acnum%}{{details.acnum}}{%endif%}</td> -->
+          <!-- <td>{%if details.editor%}{{details.editor}}{%endif%}</td> -->
+          <td>{%if details.language.id%}{{details.language.name}}{%endif%}</td>
+          <td>{%if details.year%}{{details.year}}{%endif%}</td>
+          <td>{%if details.edition%}{{details.edition}}{%endif%}</td>
+          <td>{%if details.category%}{{details.category}}{%endif%}</td>
+          <td>{%if details.library.id%}<img
+              src="{{ url_for('static',filename='images/library/'+ details.library.image) }}" width="40em"
+              class="rounded mx-auto d-block" data-bs-toggle="tooltip" data-bs-placement="left"
+              title="{{details.library.name}}" alt="{{details.library.name}}"> {%endif%}</td>
+
+          <td>
+            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+              <a href="{{url_for('publication_details',id=details.id,pg=search_results.page)}}">
+                <button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details"
+                  class="btn btn-outline-success btn-sm">
+                  <i class="bi bi-card-heading"></i>
+                </button></a>
+  
+  
+              {% if current_user.is_admin == true %}
+              <a href="{{url_for('edit_publication',id=details.id,pg=search_results.page)}}">
+                <button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Publication"
+                  class="btn btn-outline-primary btn-sm">
+  
+                  <i class="bi bi-pencil-square"></i>
+                </button></a>
+  
+                {% if current_user.username=='nirat' %}
+                <a href="{{url_for('publication_delete',id=details.id)}}"
+                onclick="return confirm('Are you sure you want to delete this entry?')">
+                <button type="button" data-bs-toggle="tooltip" data-bs-placement="right" title="Delete Publication"
+                  class="btn btn-outline-danger btn-sm">
+                  <i class="bi bi-trash3-fill"></i>
+                </button></a> 
+                 {%endif%}
+              
+              {%endif%}
+            </div>
+            <!-- <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+              <a href="{{url_for('publication_details',id=details.id,pg=1)}}">
+                <button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details"
+                  class="btn btn-outline-secondary btn-sm">
+                  <i class="bi bi-file-binary"></i>
+                </button></a>
+
+
+              {% if current_user.is_admin == true %}
+              <a href="{{url_for('edit_publication',id=details.id,pg=1)}}">
+                <button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Publication"
+                  class="btn btn-outline-primary btn-sm">
+
+                  <i class="bi bi-pencil-square"></i>
+                </button></a>
+
+
+              <a href="{{url_for('publication_delete',id=details.id,pg=1)}}"
+                onclick="return confirm('Are you sure you want to delete this entry?')">
+                <button type="button" data-bs-toggle="tooltip" data-bs-placement="right" title="Delete Publication"
+                  class="btn btn-outline-danger btn-sm">
+                  <i class="bi bi-trash3-fill"></i>
+                </button></a>
+              {%endif%}
+            </div> -->
+          </td>
+        </tr>
+        {%endfor%}
+      </tbody>
+    </table>
+
+
+
+    {% endif %}
+
+
+
+
+  </div>
+
+
+</div>
+
+
+{% endblock contentA %}
+
+{% block paginationbottom %}
+
+{% if search_results.iter_pages %}
+
+<nav aria-label="..." class="linkfnt">
+  <ul class="pagination  justify-content-center pagination-sm">
+    {% if search_results.has_prev %}
+    <li class="page-item ">
+      <a class="page-link" aria-label="Previous"
+        href="{{url_for('pubsearch',search_term=search_term,page_num=search_results.prev_num)}}"><span
+          aria-hidden="true">&laquo;</span></a>
+    </li>
+    {%else%}
+    <li class="page-item disabled">
+      <a class="page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+    </li>
+    {%endif%}
+
+    {% for page in
+    search_results.iter_pages(left_edge=left_edge,right_edge=right_edge,left_current=left_current,right_current=right_current)
+    %}
+    {%if page %}
+    {% if page == search_results.page %}
+    <li class="page-item active"><a class="page-link"
+        href="{{url_for('pubsearch',search_term=search_term,page_num=page)}}">{{page}}</a></li>
+    {%else%}
+    <li class="page-item"><a class="page-link"
+        href="{{url_for('pubsearch',search_term=search_term,page_num=page)}}">{{page}}</a></li>
+    {%endif%}
+    {%else%}
+    <li class="page-item disabled"><a href="#" class="page-link">...</a>
+    </li>
+
+    {%endif%}
+    {%endfor%}
+
+    {% if search_results.has_next %}
+    <li class="page-item">
+      <a class="page-link" aria-label="Next"
+        href="{{url_for('pubsearch',search_term=search_term,page_num=search_results.next_num)}}"> <span
+          aria-hidden="true">&raquo;</span></a>
+    </li>
+
+    {%else%}
+    <li class="page-item disabled">
+      <a class="page-link" aria-label="Next" href="#"> <span aria-hidden="true">&raquo;</span></a>
+
+    </li>
+
+    {%endif%}
+
+    {% if search_results.pages == search_results.page %}
+    {%set goto=search_results.prev_num%}
+    {%else%}
+    {%set goto=search_results.next_num%}
+    {%endif%}
+    &nbsp;
+    <div class="input-group mb-3" style="width:85px;">
+      {%if search_results .pages<=1 %} {%set goto=1%} <input type="text" name="pageskip" id="pageskip2"
+        class="form-control forn-control-sm linkfnt" disabled placeholder="Goto" aria-label="search_text"
+        aria-describedby="button-addon2" value="{{goto}}" style="width: 15pt;">
+        {%else%}
+        <input type="text" name="pageskip" id="pageskip2" class="form-control forn-control-sm linkfnt"
+          placeholder="Goto" aria-label="search_text" aria-describedby="button-addon2" value="{{goto}}"
+          style="width: 1pt;">
+        {%endif%}
+        <input type="hidden" name="q" id="q2" value={{search_term}}>
+
+        <button id="go-btn2" class="btn btn-outline-secondary btn-sm " style="width:25pt;" value="Go"
+          id="button-addon2">Go</button>
+
+    </div>
+
+
+
+
+  </ul>
+
+</nav>
+{%endif%}
+
+
+<script>
+
+  document.getElementById("pageskip").addEventListener("keyup", function (event) {
+    if (event.keyCode === 13) {
+      goToPage();
+    }
+  });
+  document.getElementById("go-btn").addEventListener("click", goToPage);
+
+  function goToPage() {
+    event.preventDefault();
+    var pageskip = document.getElementById('pageskip').value;
+    var q = document.getElementById('q').value;
+    var url = '/pubsearch?search_term=' + q + '&page_num=' + pageskip; // create the URL
+    var link = document.createElement('a');
+    link.href = url;
+    link.click();
+  }
+
+  document.getElementById("pageskip2").addEventListener("keyup", function (event) {
+    if (event.keyCode === 13) {
+      goToPage2();
+    }
+  });
+  document.getElementById("go-btn2").addEventListener("click", goToPage2);
+
+  function goToPage2() {
+    event.preventDefault();
+    var pageskip = document.getElementById('pageskip2').value;
+    var q = document.getElementById('q2').value;
+    var url = '/pubsearch?search_term=' + q + '&page_num=' + pageskip;
+    var link = document.createElement('a');
+    link.href = url;
+    link.click();
+  } 
+</script>
+{%endblock paginationbottom%}

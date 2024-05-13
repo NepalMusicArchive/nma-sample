@@ -1,0 +1,170 @@
+{%extends 'dataset-layout.html'%}
+{% set active_page = "publication" %}
+
+
+{%block results%}
+
+
+<span style="float: right;">
+  <!-- geocoder call-->
+  <script src="{{url_for('static',filename='js/location.js')}}"></script>
+
+  
+
+
+<p class="linkfnt "> 
+        
+  <button disabled type="button" class="btn btn-sm btn-dark position-relative">
+    {{search_string}}
+    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
+      {{get_count}}
+      <span class="visually-hidden">unread messages</span>
+    </span>
+   
+  </button>
+  </p>
+  </span>
+{%endblock results%}
+
+
+{%block content%}
+
+<div class="container-fluid linkfnt">
+
+
+
+  <table id="publicationTable" class="table table-striped table-light table-hover table-responsive shadow-sm  bg-body rounded">
+    <thead>
+      <tr>
+        <th scope="col">Title</th>
+        <th scope="col">Author</th>
+        <th scope="col">Publisher</th>
+        <th scope="col">ISBN</th> 
+        <th scope="col">Language</th>
+        <th scope="col">Year</th>
+        <th scope="col">Edition</th>
+        <th scope="col">Category</th>
+        <th scope="col">Library</th>
+        <th scope="col" style="width:120px">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td scope="col">Title</td>
+        <td scope="col">Author</td>
+        <td scope="col">Publisher</td>
+        <td scope="col">ISBN</td> 
+        <td scope="col">Language</td>
+        <td scope="col">Year</td>
+        <td scope="col">Edition</td>
+        <td scope="col">Category</td>
+        <td scope="col">Library</td>
+        <td scope="col" >Action</td>
+      </tr>
+      </tbody>
+
+  </table>
+
+  {% if rtype=="all" %}
+  <script type="text/javascript" src="{{ url_for('static',filename='js/allpublications.js') }}"></script>
+  {%else%}
+  
+  <!-- <script type="text/javascript" src="{{ url_for('static',filename='js/nopublications.js') }}"></script> -->
+<script>
+
+  
+$(document).ready(function() {
+      $('#publicationTable').DataTable({
+          "responsive": "true",
+          "lengthChange": "false",
+          "autowidth": "false",
+          "serverSide": true,
+          "ordering": false,
+         
+          "ajax": {
+              "url": "/lib_publications/{{q}}",
+              "type": "GET",
+              
+          },
+          "columns": [
+
+              { "data": "title","orderable": true },           
+              { "data": "author" },         
+              { "data": "publisher" },
+              { "data": "isbn" },
+              { "data": "language" },
+              { "data": "year" },
+              { "data": "edition" },
+              { "data": "category" },                
+              {
+                "data": null,
+            "render": function (data, type, row) {
+                
+                // Other buttons
+                var actionButtons = 
+
+                '<img src="'+ row.lib_image_url +'" width="40em" class="rounded mx-auto d-block" data-bs-toggle="tooltip" data-bs-placement="left"'+
+                ' title="'+data.library+'" alt="'+data.library+'"></img>' 
+              
+                return   actionButtons ;
+            },
+                
+        },
+             
+              {
+              "data": null,
+          "render": function (data, type, row) {
+              
+              // Other buttons
+              var actionButtons = 
+              '<a href="' + row.detail_url + '"v>' +
+                        '<button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details" class="btn btn-outline-success btn-sm btn-sm">' +
+                        '<i class="bi bi-card-heading"></i></button></a>' +
+                        '<a href="' + row.edit_url + '"v>' +
+                        '<button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Collection" class="btn btn-outline-primary btn-sm btn-sm">' +
+                        '<i class="bi bi-pencil-square"></i></button></a>' +
+                        '<a href="' + row.delete_url + '"v onclick="return confirm(\'Are you sure you want to delete this entry?\')">' +
+                        '<button type="button" data-bs-toggle="tooltip" data-bs-placement="right" title="Delete Collection" class="btn btn-outline-danger btn-sm">' +
+                        '<i class="bi bi-trash3-fill"></i></button></a>'+
+                        '</form>';
+
+            
+              return   actionButtons ;
+          },
+              
+      }
+          
+          ],
+          dom: '<"top"fip>lrt<"bottom"p><"clear">',
+  "pageLength": 20,
+  "lengthMenu": [ 10, 20, 50, 75, 100 ],
+  "pagingType": "simple_numbers", 
+  "mark": true,
+  "drawCallback": function(settings) {
+              // Custom draw callback to update info in the table footer
+              var api = this.api();
+              var pageInfo = api.page.info();
+
+              $('#start').html(pageInfo.start + 1);
+              $('#end').html(pageInfo.end);
+              $('#total').html(pageInfo.recordsDisplay);
+              $('#totalRecords').html(pageInfo.recordsTotal);
+              $('#recordsFiltered').html(pageInfo.recordsFiltered);
+          }
+      });
+  });
+
+
+
+
+
+
+
+
+  
+</script>
+
+
+  {%endif%}
+
+  {%endblock%}

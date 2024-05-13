@@ -1,0 +1,182 @@
+{% extends 'layouts.html' %}
+{% set active_page = "users" %}
+{% block content %}
+
+<div class="row">
+
+  <div class="col col-sm linkfnt">
+
+
+    {% if user_list %}
+
+    <table class="table table-striped table-hover  shadow-sm p-3 mb-5 bg-body rounded">
+
+      <tr>
+        <th class="col">Roles</th>
+        <th class="col">Username</th>
+        <th class="col">Full Name</th>
+        <th class="col">Email ID</th>
+      </tr>
+      <tr>
+        <td>
+          {% if user_list.activestate == False %}
+          <span class="badge text-bg-success" style="padding: 5px;" data-bs-toggle="tooltip" data-bs-placement="top"
+            title="User Active"><i class="bi bi-person-check-fill"></i></span>
+          {%else%}
+          <span class="badge text-bg-warning" style="padding: 5px;" data-bs-toggle="tooltip" data-bs-placement="top"
+            title="User Disabled"> <i class="bi bi-person-fill-slash"></i></span>
+          {%endif%}
+
+          {% if user_list.db_notify ==True %}
+          <span class="badge text-bg-dark" style="padding: 5px;" data-bs-toggle="tooltip" data-bs-placement="top"
+            title="DB Emails Enabled"><i class="bi bi-envelope-check-fill"></i></span>
+          {%endif%}
+          {% if user_list.is_admin == True %}
+          <span class="badge text-bg-danger" style="padding: 5px;" data-bs-toggle="tooltip" data-bs-placement="top"
+            title="Admin Role"><i class="bi bi-asterisk"></i></span>
+          {%endif%}
+
+        </td>
+        <td> {{ user_list['username'] }} <span class="badge badge-pill bg-info text-dark" data-bs-toggle="tooltip"
+            data-bs-placement="right" title="Records Entered">
+            {{ record_count }}</span>
+        </td>
+        <td> {{ user_list['fullname'] }}</td>
+        <td> {{ user_list['email'] }}</td>
+
+      </tr>
+    </table>
+    {% endif %}
+
+  </div>
+
+  {% if current_user.is_admin == True or current_user.username == user_list.username %}
+  <div class="col col-lg-2 linkfnt shadow p-3 mb-5 bg-body rounded">
+    <strong> Update Profile </strong>
+    <form method="POST" action="{{url_for('edit',id=user_list.id)}}">
+      {{ form.csrf_token }}
+      <div class="mb-3">
+
+        <div class="mb-3">
+          {{ form.fullname.label(class='form-control-label') }}
+          {% if form.fullname.errors %}
+          {{ form.fullname(class='form-control form-control-sm is-invalid')}}
+          {% for error in form.fullname.errors %}
+          <span>{{error}}</span>
+          {%endfor%}
+          {%else%}
+          {{ form.fullname(class='form-control form-control-sm',value=user_list.fullname) }}
+          {% endif %}
+        </div>
+        <div class="mb-3">
+          {{ form.password.label(class='form-control-label') }}
+          {% if form.password.errors %}
+          {{ form.password(class='form-control form-control-sm is-invalid')}}
+          {% for error in form.password.errors %}
+          <span>{{error}}</span>
+          {%endfor%}
+          {%else%}
+          {{ form.password(class='form-control form-control-sm',value=user_list.password) }}
+          {% endif %}
+        </div>
+        <div class="mb-3">
+          {{ form.confirm_password.label(class='form-control-label') }}
+          {% if form.confirm_password.errors %}
+          {{ form.confirm_password(class='form-control form-control-sm is-invalid')}}
+          {% for error in form.confirm_password.errors %}
+          <span>{{error}}</span>
+          {%endfor%}
+          {%else%}
+          {{ form.confirm_password(class='form-control form-control-sm') }}
+          {% endif %}
+        </div>
+
+
+
+        {% if current_user.is_admin == True %}
+        <div class="mb-3">
+          <div class="form-check form-switch">
+            {% if current_user.is_admin == user_list.is_admin %}
+            {%if current_user.username == user_list.username or user_list.username == 'admin' %}
+            {{ form.is_admin(class_="form-check-input",checked=True,disabled=True)|safe }} {{ form.is_admin.label|safe
+            }}
+            <input type="hidden" name="is_admin" value="True">
+            {%else%}
+            {{ form.is_admin(class_="form-check-input",checked=True,disabled=False)|safe }} {{ form.is_admin.label|safe
+            }}
+            {%endif%}
+            {%else%}
+            {{ form.is_admin(class_="form-check-input",checked=False)|safe }} {{ form.is_admin.label|safe }}
+            {%endif%}
+          </div>
+          {%endif%}
+
+          {% if current_user.is_admin == True %}
+
+          {%if user_list.db_notify ==True %}
+          {%set v="True"%}
+          {%set ss="checked" %}
+
+          {%else %}
+          {%set v="False"%}
+          {%set ss=""%}
+
+          {%endif%}
+
+
+          <div class="mb-3">
+            <div class="form-check form-switch">
+
+              <input class="form-check-input" type="checkbox" id="email_notify" name="email_notify" value="{{v}}" {{ss}}
+                id="flexCheckDefault">
+              {{form.email_notify.label}}
+
+            </div>
+
+            {%if user_list.activestate ==True%}
+            {%set v="True"%}
+            {%set ss="checked" %}
+
+            {%else %}
+            {%set v="False"%}
+            {%set ss=""%}
+            {%endif%}
+
+            <div class="mb-3">
+
+              <!-- {% if current_user.is_admin == 1 %}
+          admin
+
+          {%else%}
+          arkai manche 
+          {%endif%}  -->
+              <div class="form-check form-switch">
+
+                <input class="form-check-input" type="checkbox" id="activestate" name="activestate" value="{{v}}" {{ss}}
+                  id="flexCheckDefault">
+                {{form.activestate.label}}
+
+              </div>
+
+              {%endif%}
+
+
+              {{form.submit(class='btn btn-info btn-sm')}}
+
+    </form>
+    {%endif%}
+
+    <p class="card-text" style="float: right">
+      <a class="btn btn-outline-secondary btn-sm" href="{{request.referrer}}">Back</a>
+    </p>
+  </div>
+
+</div>
+
+
+{% endblock %}
+
+
+
+</div>
+</div>

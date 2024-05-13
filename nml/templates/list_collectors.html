@@ -1,0 +1,284 @@
+{% extends 'dataset-layout.html' %}
+{%block results%}
+<span style="float: right;">
+    <p class="linkfnt "> 
+        
+        <button disabled type="button" class="btn btn-sm btn-dark position-relative">
+          
+          {% if format_id %}{{get_s.formats.name}} - {%endif%} {{query_details.collector}}
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
+            {{get_totals}}
+            <span class="visually-hidden">unread messages</span>
+          </span>
+          {%if totald >0 %}
+          <span class="position-absolute top-0 start-0 translate-middle text-dark badge rounded-pill bg-warning">
+            {{totald}}
+            <span class="visually-hidden">unread messages</span>
+            {%endif%}
+          </span>
+          
+         
+        </button>
+        </p>
+        </span>
+        
+{%endblock results%}
+{% block contentA%}
+
+
+<body>
+    <div class="container w-100 linkfnt">
+        <div class="col-mb-9" style="border: 1px">
+    <table id="collectionTable" class="table table-striped table-light table-hover table-responsive shadow-sm p-6 mb-8 bg-body rounded">
+        <thead>
+            <tr>
+              
+          <th scope="col">Contributor</th>
+          <th scope="col">Media</th>
+          <th scope="col">Format</th>
+          <th scope="col">Title</th>
+          <th scope="col">Inscriptions</th>
+          <th scope="col">Digitized By</th>
+          <th scope="col">Filename</th>
+          
+          <th scope="col" style="width: 130px;">Action</th>
+ 
+            </tr>
+        </thead>
+        <tbody>
+            <td>Contributor</td>
+            <td>Media</td>
+            <td>Format</td>
+            <td>Title</td>
+            <td>Inscriptions</td>
+            <td>Digitized By</td>
+            <td>Filename</td>
+            
+            <td>Action</td>
+        </tbody>
+        
+    </table>
+    <!-- fdsafsd: {{get_formatname}} -->
+{%if not get_formatname %}
+<!-- show all collections -->
+    <script>
+        $(document).ready(function() {
+            $('#collectionTable').DataTable({
+                "responsive": "true",
+                "lengthChange": "false",
+                "ordering": false,
+                "autowidth": "false",
+                "serverSide": true,
+                processing: true,
+                "ajax": {
+                    "url": "/collectionbycollector/{{q}}/{{format_id}}",
+                    "type": "GET",
+                    
+                },
+                "columns": [
+                    // Define your columns as needed
+
+                    { "data": "collector","orderable": true },                    
+                    { "data": "media" },
+                    { "data": "format" },
+                    { "data": "title" ,
+                    "render": function (data, type, row) {
+                        if (type === 'display' && data) {
+                        var maxLength = 40; // Change this to your desired maximum number of characters
+
+                        // Truncate if more than maxLength characters
+                        var truncatedText = data.length > maxLength ? data.slice(0, maxLength) + '...' : data;
+
+                        return truncatedText;
+                    }
+
+                    return data;
+                },},                   
+                    { "data": "inscriptions",
+                    "render": function (data, type, row) {
+                        if (type === 'display' && data) {
+                        var maxLength = 40; // Change this to your desired maximum number of characters
+
+                        // Truncate if more than maxLength characters
+                        var truncatedText = data.length > maxLength ? data.slice(0, maxLength) + '...' : data;
+
+                        return truncatedText;
+                    }
+
+                    return data;
+                },
+            },
+                    { "data": "user","orderable": true },
+                    { "data": "tagname","orderable": true },
+                    {
+                    "data": null,
+                "render": function (data, type, row) {
+                    
+                    // Other buttons
+                    // var actionButtons = 
+                    
+
+                        // Check the value of item_state and add link accordingly
+                    var statusButton = '';
+                    if (row.item_state === 1) {
+                        statusButton = '<form action="' + row.activate_url + '" method="POST">' +
+                            '{{ form.csrf_token }}' +
+                            '<input type="hidden" name="id" value="' + row.id + '" id="id">' +
+                            
+                            '<a href="' + row.collection_detail_url + '"v>' +
+                        '<button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details" class="btn btn-outline-success btn-sm btn-sm">' +
+                        '<i class="bi bi-card-heading"></i></button></a>' +
+                        '<a href="' + row.edit_url + '"v>' +
+                        '<button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Collection" class="btn btn-outline-primary btn-sm btn-sm">' +
+                        '<i class="bi bi-pencil-square"></i></button></a>' +
+                        '<button type="submit" name="status" value="public" class="btn btn-outline-warning btn-sm" data-bs-toggle="tooltip" data-bs-placement="right" title="Make Private"><i class="bi bi-eye"></i></button>' +
+                        '<a href="' + row.delete_url + '"v onclick="return confirm(\'Are you sure you want to delete this entry?\')">' +
+                        '<button type="button" data-bs-toggle="tooltip" data-bs-placement="right" title="Delete Collection" class="btn btn-outline-danger btn-sm">' +
+                        '<i class="bi bi-trash3-fill"></i></button></a>'+
+                        '</form>';
+                            
+                    } else {
+                        statusButton = '<form action="' + row.activate_url + '" method="POST">' +
+                            '{{ form.csrf_token }}' +
+                            '<input type="hidden" name="id" value="' + row.id + '" id="id">' +
+                            
+                            '<a href="' + row.collection_detail_url + '"v>' +
+                        '<button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details" class="btn btn-outline-success btn-sm btn-sm">' +
+                        '<i class="bi bi-card-heading"></i></button></a>' +
+                        '<a href="' + row.edit_url + '"v>' +
+                        '<button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Collection" class="btn btn-outline-primary btn-sm btn-sm">' +
+                        '<i class="bi bi-pencil-square"></i></button></a>' +
+                        '<button type="submit" name="status" value="private" class="btn btn-outline-success btn-sm" data-bs-toggle="tooltip" data-bs-placement="right" title="Make Public"><i class="bi bi-eye-slash"></i></button>' +
+                        '<a href="' + row.delete_url + '"v onclick="return confirm(\'Are you sure you want to delete this entry?\')">' +
+                        '<button type="button" data-bs-toggle="tooltip" data-bs-placement="right" title="Delete Collection" class="btn btn-outline-danger btn-sm">' +
+                        '<i class="bi bi-trash3-fill"></i></button></a>'+
+                        '</form>';
+
+                            
+                    }                    
+                    return   statusButton  ;
+                },
+                    
+            }
+                
+                ],
+                dom: '<"top"fip>lrt<"bottom"p><"clear">',
+        "pageLength": 20,
+        "lengthMenu": [ 10, 20, 50, 75, 100 ],
+        "pagingType": "simple_numbers", 
+        "mark": true,
+        "drawCallback": function(settings) {
+                    // Custom draw callback to update info in the table footer
+                    var api = this.api();
+                    var pageInfo = api.page.info();
+
+                    $('#start').html(pageInfo.start + 1);
+                    $('#end').html(pageInfo.end);
+                    $('#total').html(pageInfo.recordsDisplay);
+                    $('#totalRecords').html(pageInfo.recordsTotal);
+                    $('#recordsFiltered').html(pageInfo.recordsFiltered);
+                }
+            });
+        });
+    </script>
+
+    {%else%}
+<!-- List by format -->
+
+    <script>
+        $(document).ready(function() {
+            $('#collectionTable').DataTable({
+                "responsive": "true",
+                "lengthChange": "false",
+                "ordering": false,
+                "autowidth": "false",
+                "serverSide": true,
+                processing: true,
+                "ajax": {
+                    "url": "/collectionbyformat/{{q}}",
+                    "type": "GET",
+                    
+                },
+                "columns": [
+                    // Define your columns as needed
+
+                    { "data": "collector","orderable": true },                    
+                    { "data": "media" },
+                    { "data": "format" },
+                    { "data": "title" },                   
+                    { "data": "inscriptions",
+                    "render": function (data, type, row) {
+                        if (type === 'display' && data) {
+                        var maxLength = 40; // Change this to your desired maximum number of characters
+
+                        // Truncate if more than maxLength characters
+                        var truncatedText = data.length > maxLength ? data.slice(0, maxLength) + '...' : data;
+
+                        return truncatedText;
+                    }
+
+                    return data;
+                },
+            },
+                    { "data": "user","orderable": true },
+                    { "data": "tagname","orderable": true },
+                    {
+                    "data": null,
+                "render": function (data, type, row) {
+                    // Check the value of item_state and add link accordingly
+                    var statusButton = '';
+                    if (row.item_state === 1) {
+                        statusButton = '<form action="' + row.activate_url + '" method="POST">' +
+                            '{{ form.csrf_token }}' +
+                            '<input type="hidden" name="id" value="' + row.id + '" id="id">' +
+                            '<button type="submit" name="status" value="public" class="btn btn-outline-warning btn-sm" data-bs-toggle="tooltip" data-bs-placement="right" title="Make Private"><i class="bi bi-eye"></i></button>';
+                         
+                    } else {
+                        statusButton = '<form action="' + row.activate_url + '" method="POST">' +
+                            '{{ form.csrf_token }}' +
+                            '<input type="hidden" name="id" value="' + row.id + '" id="id">' +
+                            '<button type="submit" name="status" value="private" class="btn btn-outline-success btn-sm" data-bs-toggle="tooltip" data-bs-placement="right" title="Make Public"><i class="bi bi-eye-slash"></i></button>';                            
+                    }
+
+                    // Other buttons
+                    var actionButtons = '<a href="' + row.collection_detail_url + '"v>' +
+                        '<button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details" class="btn btn-outline-success btn-sm btn-sm">' +
+                        '<i class="bi bi-card-heading"></i></button></a>' +
+                        '<a href="' + row.edit_url + '"v>' +
+                        '<button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Collection" class="btn btn-outline-primary btn-sm btn-sm">' +
+                        '<i class="bi bi-pencil-square"></i></button></a>' +
+                        '<a href="' + row.delete_url + '"v onclick="return confirm(\'Are you sure you want to delete this entry?\')">' +
+                        '<button type="button" data-bs-toggle="tooltip" data-bs-placement="right" title="Delete Collection" class="btn btn-outline-danger btn-sm">' +
+                        '<i class="bi bi-trash3-fill"></i></button></a>'+
+                        '</form>';
+
+                    return statusButton + actionButtons;
+                },
+                    
+            }
+                
+                ],
+                dom: '<"top"fip>lrt<"bottom"p><"clear">',
+        "pageLength": 20,
+        "lengthMenu": [ 10, 20, 50, 75, 100 ],
+        "pagingType": "simple_numbers", 
+        "mark": true,
+        "drawCallback": function(settings) {
+                    // Custom draw callback to update info in the table footer
+                    var api = this.api();
+                    var pageInfo = api.page.info();
+
+                    $('#start').html(pageInfo.start + 1);
+                    $('#end').html(pageInfo.end);
+                    $('#total').html(pageInfo.recordsDisplay);
+                    $('#totalRecords').html(pageInfo.recordsTotal);
+                    $('#recordsFiltered').html(pageInfo.recordsFiltered);
+                }
+            });
+        });
+    </script>
+    {%endif%}
+        </div>
+    </div>
+    
+{% endblock contentA%}

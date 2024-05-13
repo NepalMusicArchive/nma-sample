@@ -1,0 +1,438 @@
+{% extends 'layouts.html' %}
+{% set active_page = "collections" %}
+
+{%block pagination%}
+
+{%endblock pagination%}
+
+{% block content %}
+
+<div class="row">
+
+  <div class="p-3 mb-5 bg-body rounded">
+
+    <form method="POST" enctype="multipart/form-data">
+      {{ form.csrf_token }}
+      <div class="row">
+        <div class="col-8">
+          <div class="input-group mb-3 linkfnt">
+            <span class="input-group-text linkfnt" id="basic-addon1">{{form.contributor.label}}</span>
+            <select class="form-select form-select-sm linkfnt" name="{{ form.contributor.name }}"
+              id="{{ form.contributor.id }}">
+              {% for value, label in form.contributor.choices %}
+              <option value="{{ value }}" {% if value==form.contributor.default %} selected {% endif %}> {{ label }}
+              </option>
+              {% endfor %}
+            </select>
+
+          </div>
+          <p>
+          <div class="form-group row linkfnt">
+            <div class="col-sm-6">
+              <div class="input-group mb-2 linkfnt">
+                <span class="input-group-text linkfnt" id="basic-addon1">{{form.media_name.label}}</span>
+
+                <select class="form-select form-select-sm linkfnt" name="{{ form.media_name.name }}"
+                  id="{{ form.media_name.id }}">
+                  {% for value, label in form.media_name.choices %}
+                  <option value="{{ value }}" {% if value==form.media_name.default %} selected {% endif %}> {{ label }}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+
+            </div>
+            <div class="col-sm-6">
+              <div class="input-group mb-2 linkfnt">
+                <span class="input-group-text linkfnt" id="basic-addon1">{{form.format_name.label}}</span>
+                <select class="form-select form-select-sm linkfnt" name="{{ form.format_name.name }}"
+                  id="{{ form.format_name.id }}">
+                  {% for value, label in form.format_name.choices %}
+                  <option value="{{ value }}" {% if value==form.format_name.default %} selected {% endif %}> {{ label }}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+
+          </div>
+          </p>
+
+
+          <!-- additional input fields for publication details -->
+          <div id="additional_publication" class="bg-info p-1 text-dark bg-opacity-10" style="display: none;">
+            <p>
+              <strong>Additional information: </strong>
+            <p>
+            <div class="form-group row linkfnt">
+              <div class="col-sm-9">
+                <!-- <div class="input-group mb-3 linkfnt">
+                        <span class="input-group-text linkfnt" id="basic-addon1">{{form.company.label}}</span>
+                        {{form.company(class='form-select form-select-sm linkfnt')}}
+                      </div> -->
+                      <div class="form-group row linkfnt">
+                        <div class="col-sm-7">
+                          <div class="input-group mb-3 linkfnt">
+                            <span class="input-group-text linkfnt" id="basic-addon1">{{form.image1.label}}</span>
+                            {{form.image1(class='form-control linkfnt')}}
+                          </div>
+                        </div>
+                        <div class="col-sm-5">
+                          <div class="input-group mb-2 linkfnt">
+                            <span class="input-group-text linkfnt" id="basic-addon1">{{form.location1.label}}</span>
+                            {{form.location1(class='input-group form-control
+                            linkfnt',placeholder=form.location1.description,value=show_details.location1)}}
+                          </div>
+                        </div>
+                
+                      </div>
+                
+                
+          
+                 
+      
+              
+             
+              </div>
+
+              <div class="col-sm-6">
+
+              </div>
+            </div>
+            </p>
+            </p>
+          </div>
+
+          <!-- additional input fields for audio details -->
+          <div id="additional_audio" class="bg-warning p-1 text-dark bg-opacity-10" style="display: none;">
+            <p>
+              <strong>Additional information: </strong>
+            <div class="form-group row linkfnt">
+              <div class="col-sm-6">
+                <div class="input-group mb-2 linkfnt">
+                  <span class="input-group-text linkfnt" id="basic-addon1">{{form.collection_title.label}}</span>
+                  {% if show_details.collection_title != None %}
+                  {{form.collection_title(class='form-control form-control-sm
+                  linkfnt',value=show_details.collection_title )}}
+                  {%else%}
+                  {{form.collection_title(class='form-control form-control-sm linkfnt' )}}
+                  {% endif %}
+                </div>
+
+              </div>
+              <div class="col-sm-6">
+                <div class="input-group mb-2 linkfnt">
+                  <span class="input-group-text linkfnt" id="basic-addon1">{{form.artist.label}}</span>
+                  {% if show_details.artist_id != None %}
+                  {{form.artist(class='form-control form-control-sm linkfnt',value=show_details.artist_id )}}
+                  {%else%}
+                  {{form.artist(class='form-control form-control-sm linkfnt' )}}
+                  {%endif%}
+                </div>
+              </div>
+
+            </div>
+
+            </p>
+            <p>
+            <div class="form-group row linkfnt">
+              <div class="col-sm-6">
+                <div class="input-group mb-3 linkfnt">
+                  <span class="input-group-text linkfnt" id="basic-addon1">{{form.language.label}}</span>
+                  <select class="form-select form-select-sm linkfnt" name="{{ form.language.name }}"
+                    id="{{ form.language.id }}">
+                    {% for value, label in form.language.choices %}
+                    <option value="{{ value }}" {% if value==form.language.default %} selected {% endif %}> {{ label }}
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="input-group mb-3 linkfnt">
+                  <span class="input-group-text linkfnt" id="basic-addon1">{{form.genre.label}}</span>
+                  <select class="form-select form-select-sm linkfnt" name="{{ form.genre.name }}"
+                    id="{{ form.genre.id }}">
+                    {% for value, label in form.genre.choices %}
+                    <option value="{{ value }}" {% if value==form.genre.default %} selected {% endif %}> {{ label }}
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+            </p>
+            <p>
+            <div class="form-group row linkfnt">
+              <div class="col-sm-6">
+                <div class="input-group mb-3 linkfnt">
+                  <span class="input-group-text linkfnt" id="basic-addon1">{{form.company.label}}</span>
+                  <select class="form-select form-select-sm linkfnt" name="{{ form.company.name }}"
+                    id="{{ form.company.id }}">
+                    {% for value, label in form.company.choices %}
+                    <option value="{{ value }}" {% if value==form.company.default %} selected {% endif %}> {{ label }}
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-sm-6">
+                <div class="input-group mb-3 linkfnt">
+                  <span class="input-group-text linkfnt" id="basic-addon1">{{form.image.label}}</span>
+                  {{form.image(class='form-control linkfnt')}}
+                </div>
+              </div>
+            </div>
+            </p>
+            <p>
+            <div class="form-group row linkfnt">
+              <div class="col-sm-4">
+                <div class="input-group mb-2 linkfnt">
+                  <span class="input-group-text linkfnt" id="basic-addon1">{{form.release_date.label}}</span>
+                  <select class="form-select form-select-sm linkfnt" name="{{ form.release_date.name }}"
+                    id="{{ form.release_date.id }}">
+                    {% for ns, text in form.release_date.choices %}
+                    <option value="{{ ns }}" {% if ns==form.release_date.default %} selected {% endif %}> {{ text }}
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-sm-4">
+                <div class="input-group mb-2 linkfnt">
+                  <span class="input-group-text linkfnt" id="basic-addon1">{{form.release_month.label}}</span>
+                  <select class="form-select form-select-sm linkfnt" name="{{ form.release_month.name }}"
+                    id="{{ form.release_month.id }}">
+                    {% for value, label in form.release_month.choices %}
+                    <option value="{{ value }}" {% if value==form.release_month.default %} selected {% endif %}> {{
+                      label }} </option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+              </div>
+
+              <div class="col-sm-4">
+                <div class="input-group mb-3 linkfnt">
+                  <span class="input-group-text linkfnt" id="basic-addon1">{{form.release_year.label}}</span>
+                  <select class="form-select form-select-sm linkfnt" name="{{ form.release_year.name }}"
+                    id="{{ form.release_year.id }}">
+                    {% for ns, text in form.release_year.choices %}
+                    <option value="{{ ns }}" {% if ns==form.release_year.default %} selected {% endif %}> {{ text }}
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              
+      <div class="form-group row linkfnt">
+
+        <div class="col-sm-6">
+          <div class="input-group mb-2 linkfnt">
+            <span class="input-group-text linkfnt" id="basic-addon1">{{form.location.label}}</span>
+            {% if show_details.location != None %}
+            {{form.location(class='form-control form-control-sm
+            linkfnt',value=show_details.location )}}
+            {%else%}
+            {{form.location(class='form-control form-control-sm linkfnt' )}}
+            {% endif %}
+          </div>
+         
+        </div>
+
+        <div class="col-sm-6">
+          <div class="input-group mb-2 linkfnt">
+            <span class="input-group-text linkfnt" id="basic-addon1">{{form.audiofile.label}}</span>
+            {{form.audiofile(class='form-control linkfnt')}}
+          </div>
+        </div>
+
+      </div>
+            </div>
+            </p>
+          </div>
+
+        </div>
+        <div class="col-4 container text-center linkfnt">
+
+          <span class="float-center d-inline p-1 text-bg-dark user-select-all" linkfnt">{{show_details.tagname}}</span>
+          {% if show_details.image %}
+
+
+
+          <img src="{{ url_for('static',filename='uploads/'+ show_details.image) }}" width="200"
+            class="rounded mx-auto d-block">
+
+
+
+          {%endif%}
+
+          <br>
+       
+          {%if  show_details.audio_file%}
+          Preview: </br>
+         
+          <audio controls>
+            
+            <source src="{{ audio_file }}" type="audio/mpeg">
+            Your browser does not support the audio element.
+          </audio>
+
+          {%endif%}
+          <br>
+        </div>
+
+        
+      </div>
+
+      </p>
+      <div class="input-group mb-2 linkfnt">
+        <span class="input-group-text linkfnt">{{form.inscriptions.label}}</span>
+        {{form.inscriptions(rows='5',class='form-control form-control-sm
+        linkfnt',placeholder=show_details.inscriptions)}}
+      </div>
+      <br>
+      <div class="input-group mb-2 linkfnt">
+        <span class="input-group-text linkfnt" id="basic-addon1">{{form.keywords.label}}</span>
+
+        {{form.keywords(rows='5',class='form-control form-control-sm linkfnt',placeholder=show_details.keywords)}}
+      </div>
+      <br>
+      <div class="input-group  mb-3 linkfnt">
+        <span class="input-group-text linkfnt">{{form.notes.label}}</span>
+        {{form.notes(rows='5',class='form-control linkfnt')}}
+      </div>
+      <br>
+
+      <p class="card-text linkfnt" style="float:right">
+        <span class="linkfnt">
+          Digitized By : {% if show_details.user.fullname%}<mark
+            class=" linkfnt">{{show_details.user.fullname|safe}}</mark>{%endif%} - {%if show_details.date_added%}
+          [<mark>{{show_details.date_added.strftime("%-d %B %Y")}}</mark>] {%endif%}
+        </span>
+      </p>
+
+
+      <div class="d-flex flex-row mb-3">
+        <div class="p-2 linkfnt">
+          {% if current_user.username==show_details.user.username or current_user.is_admin == True %}
+          <p>
+            
+          <div role="group" aria-label="Basic mixed styles example">
+            {{form.submit(class='btn btn-primary linkfnt')}}
+            &nbsp; &nbsp; &nbsp; &nbsp;
+            
+            {% if current_user.username=='nirat' %}
+            <a href="{{url_for('collection_delete',id=show_details.id)}}"
+              onclick="return confirm('Are you sure you want to delete this entry?')">
+              <button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Collection"
+                class="btn btn-outline-danger btn-sm linkfnt">
+                Delete Collection
+              </button></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <p class="card-text" style="float: right">
+              <a class="btn btn-outline-secondary btn-sm" href="{{request.referrer}}">Back</a>
+            </p>
+            {%endif%}
+          </div>
+
+          {%endif%}
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+
+
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  /* dynamic select of media / format in dropdowns*/
+  var media_name_select = document.getElementById("media_name");
+  var format_mame_select = document.getElementById("format_name");
+   <!-- alert ("{{request.referrer}}"); -->
+  var audioValues = ["1", "2", "3", "12", "13", "14", "19", "10", "4", "5", "6", "15", "16", "17"];
+  var publicationValues = ["8", "18"];
+
+  media_name_select.onchange = function () {
+
+    media = media_name_select.value;
+    $("#additional_audio").hide();
+    $("#additional_publication").hide();
+
+    fetch('/format/' + media).then(function (response) {
+      <!-- alert("test .. " + media); -->
+
+      response.json().then(function (data) {
+        var optionHTML = '';
+
+        for (var format_mame_select of data.format_list) {
+          optionHTML += '<option value="' + format_mame_select.id + '">' + format_mame_select.name + '</option>';
+        }
+
+        format_name.innerHTML = optionHTML;
+      })
+
+    });
+  }
+
+  $(document).ready(function () {
+    $("#open").click(function () {
+      $.ajax({
+        url: '/record_company',
+        type: 'GET',
+        success: function (response) {
+          $("#target-div").html(response);
+        }
+      });
+    });
+    /* select additional div on page load */
+    /* if format is cd , album cover, vinyl or cassette */
+    if (audioValues.includes($(this).val())) {
+      $("#additional_audio").show();
+      $("#additional_publication").hide();
+    } else if (publicationValues.includes($(this).val())) {
+      $("#additional_audio").hide();
+      $("#additional_publication").show();
+    } else {
+      $("#additional_audio").hide();
+      $("#additional_publication").hide();
+    }
+
+    //if ($("#format_name").val() == "1" || $("#format_name").val() == "10" || $("#format_name").val() == "12" || $("#format_name").val() == "14" || $("#format_name").val() == "3") {
+      if (audioValues.includes($("#format_name").val())) {
+      $("#additional_audio").show();
+      $("#additional_publication").hide();
+    } else if (publicationValues.includes($("#format_name").val())) {
+    //else if ($("#format_name").val() == "8"|| $("#format_name").val() == "18") { /* if format is publication*/
+      $("#additional_audio").hide();
+      $("#additional_publication").show();
+    } else {
+      $("#additional_audio").hide();
+      $("#additional_publication").hide();
+    }
+
+    /* select additional div on dropdown change */
+  /* select additional div on dropdown change */
+  $("#format_name").change(function () {
+    console.log($(this).val())
+    /* if format is cd , album cover, vinyl or cassette */
+    if (audioValues.includes($(this).val())) {
+      $("#additional_audio").show();
+      $("#additional_publication").hide();
+    } else if (publicationValues.includes($(this).val())) {
+      $("#additional_audio").hide();
+      $("#additional_publication").show();
+    } else {
+      $("#additional_audio").hide();
+      $("#additional_publication").hide();
+    }
+
+  });
+
+});
+</script>
+{% endblock %}

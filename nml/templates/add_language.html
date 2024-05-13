@@ -1,0 +1,85 @@
+{%extends 'layouts.html'%}
+{% set active_page = "language" %}
+{% set left_edge, right_edge, left_current, right_current = search_options %}
+
+
+{%block content %}
+
+
+<div class="row">
+
+
+  <div class="col col-md-10 linkfnt">
+
+
+    <table class="table table-striped table-light table-hover table-responsive  shadow-sm p-3 mb-5 bg-body rounded">
+      <thead>
+        <tr>
+          <!-- <th scope="col">Collection No.</th> -->
+          <th scope="col">Language</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for details in show_details %}
+        <tr>
+
+          <td>{%if details.name %}{{details.name}} {%endif%} </td>
+
+          <td>
+            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+              <!-- <a  href="">
+                    <button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details"
+                    class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-file-binary"></i>
+                  </button></a> -->
+              <a href="{{url_for('show_language',id=details.id)}}">
+                <button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Collection"
+                  class="btn btn-outline-primary btn-sm">
+
+                  <i class="bi bi-pencil-square"></i>
+                </button></a>
+
+              <a href="{{url_for('language_delete',id=details.id)}}"
+                onclick="return confirm('Are you sure you want to delete this entry?')">
+                <button type="button" data-bs-toggle="tooltip" data-bs-placement="right" title="Delete Genre"
+                  class="btn btn-outline-danger btn-sm">
+                  <i class="bi bi-trash3-fill"></i>
+                </button></a>
+
+            </div>
+          </td>
+        </tr>
+        {%endfor%}
+      </tbody>
+    </table>
+
+
+  </div>
+
+  <div class="col col-lg-2 linkfnt shadow p-3 mb-5 bg-body rounded">
+
+    <strong>{% if id %}
+      Edit
+      {%else%}
+      Add
+      {%endif%}
+      Language </strong>
+    <form action="" method="POST" id="form-library" enctype="multipart/form-data">
+
+      {{ form.csrf_token }}
+      <div class="mb-2">
+        {{form.language.label}}<br>
+        {{form.language(class="form-control form-control-sm")}}
+      </div>
+      {% if id %}
+      {{form.submit(class="btn btn-primary btn-sm",value='Save')}}
+      {%else%}
+      {{form.submit(class="btn btn-primary btn-sm")}}
+      {%endif%}
+
+    </form>
+  </div>
+
+</div>
+{%endblock content%}

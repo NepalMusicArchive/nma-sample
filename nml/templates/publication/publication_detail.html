@@ -1,0 +1,128 @@
+{% extends 'layouts.html' %}
+{% set active_page = "publication" %}
+
+{% block content %}
+<style>
+  .items {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .item {
+    height: 100%;
+    margin: 4px;
+    width: 100%;
+    max-width: calc(33% - 4px);
+  }
+</style>
+
+<!doctype html>
+
+<div class="container">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xl-3">
+
+        {% if get_detail.image %}
+
+        <img src="{{ url_for('static',filename='uploads/publication/'+ get_detail.image) }}" width="250em"
+          class="img-thumbnail rounded mx-auto d-block zoomimage">
+        {%else%}
+        <img src="{{ url_for('static',filename='images/library/not_found.png') }}" width="150em"
+          class="border border-secondary img-thumbnailrounded mx-auto d-block">
+        {%endif%}
+
+      </div>
+      <div class="col-xl-6 linkfnt">
+        <p class="fs-4">{%if get_detail.title%}{{get_detail.title}}{%endif%}</p>
+        <p class="fs-7">{%if get_detail.author%}<strong>Author</strong>: <a href="">{{get_detail.author}}</a>{%endif%}
+        </p>
+        <p class="fs-6">{%if get_detail.editor%}Editor(s):<a href="">{{get_detail.editor}}</a>{%endif%}</p>
+        {%if get_detail.publisher%}<p><strong>Publisher</strong>: <a href="">{{get_detail.publisher}}</a>{%endif%}</p>
+        <p> {%if get_detail.year and get_detail.isbn %}<strong>Year: </strong> {{get_detail.year}} {%endif%}</p>
+          <p> {%if get_detail.isbn%} <strong>ISBN</strong>: {{get_detail.isbn}}{%endif%}</p>
+        <p> {%if get_detail.category and get_detail.language%}<strong>Category: </strong> {{get_detail.category}} 
+          {%endif%}</p><p> {%if get_detail.language%} <strong>Language</strong>: {{get_detail.language.name}}{%endif%}</p>
+        <p> {%if get_detail.remarks%}<strong>Remarks: </strong> {{get_detail.remarks}} {%endif%}</p>
+      </div>
+    </div>
+
+  </div>
+  <span class="linkfnt">
+    <!-- <p class="card-text" style="float: right">
+      <a class="btn btn-outline-secondary btn-sm" href="{{request.referrer}}">Back</a>
+    </p> -->
+    <strong>Find this at:</strong>
+  </span>
+  <hr class=" border-secondary opacity-25">
+
+  
+  <div class="items linkfnt align-items-start">
+
+    {%for where in where_else%}
+    {%set i=loop.index-1 %}
+    <div class="item linkfnt col-12 p-2 rounded">
+
+      <div class="container text-start">
+        <div class="row justify-content-md-start">
+          <div class="col col-sm-4">
+            {% if where.library.image %}
+
+            <img src="{{ url_for('static',filename='images/library/'+ where.library.image) }}"
+              class="img-thumbnail d-block">
+
+            {%endif%}
+          </div>
+          <div class="col col-sm-8 text-start">
+
+            {%if where.library.name%}<strong><a href="{{where.library.gmaps_url}}"
+              target="_blank">{{where.library.name}}</a></strong><br>
+            <i class="bi bi-geo-alt-fill"></i> 
+            <a target="_blank" href="https://www.google.com/maps/dir/{{location_data.latitude}},{{location_data.longitude}}/{{where.library.map_coordinates}}">Show Direction</a>
+              (about {{distances[i]}} km away) 
+            {%endif%}          
+            <br>
+
+            {%if where.library.address%}
+
+            {% for line in where.library.address.splitlines() %}
+            {{ line }}<br class="linkfnt">
+            {% endfor %}
+
+            {%endif%}
+            <!-- <i class="bi bi-building-fill-add"></i>
+      <i class="bi bi-person-vcard-fill"> </i>
+     <i class="bi bi-telephone-fill">  </i>
+     <i class="bi bi-envelope-fill"> </i>
+     <i class="bi bi-globe-central-south-asia"></i>
+     <i class="bi bi-hourglass-split"></i> -->
+            {%if where.library.librarian%}{{where.library.librarian}}<br>{%endif%}
+            {%if where.library.contact%} {{where.library.contact}}<br>{%endif%}
+            {%if where.library.email%}{{where.library.email}}<br>{%endif%}
+            {%if where.library.website%} <a href="{{where.library.website}}"
+              target="_blank">{{where.library.website}}</a><br>{%endif%}
+            {%if where.library.hours%} {{where.library.hours}}<br>{%endif%}
+
+            <span style="color:#ff6666"> {%if where.acnum%}<strong>Accession Number:</strong>
+              {{where.acnum}}{%endif%}</span>
+
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    {%endfor%}
+
+  </div>
+
+
+</div>
+
+</div>
+
+{% endblock %}

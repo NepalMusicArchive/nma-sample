@@ -1,0 +1,140 @@
+{% extends 'layouts.html' %}
+{% set active_page = "formats" %}
+
+
+{% block content %}
+<style>
+  .items {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .item {
+    height: 100%;
+    margin: 4px;
+
+    width: 100%;
+    max-width: calc(33% - 8px);
+  }
+</style>
+<!-- <div class="container w-75 linkfnt"> -->
+<div class="container w-100  linkfnt">
+
+
+  <form method="POST" action="">
+    {{ form.csrf_token }}
+    <table class="table table-striped table-hover shadow-sm p-3 mb-5 bg-body rounded">
+      <tr>
+
+        <th>{{ form1.newmedia.label}} </th>
+        <th></th>
+      </tr>
+      <tr>
+
+
+        <td>{{ form1.newmedia(class='form-control form-control-sm')}}</td>
+        <td>
+
+          <button type="submit" class="btn btn-outline-primary btn-sm">Submit</button>
+        </td>
+
+
+
+        </td>
+      </tr>
+
+    </table>
+  </form>
+
+  <form method="POST" action="">
+    {{ form.csrf_token }}
+    <table class="table table-striped table-hover shadow-sm p-3 mb-5 bg-body rounded">
+      <tr>
+        <th>{{ form.media.label }}</th>
+        <th>{{ form.newformat.label}} </th>
+        <th></th>
+      </tr>
+      <tr>
+        <td>{{ form.media(class='form-select form-select-sm') }}</td>
+
+        <td>{{ form.newformat(class='form-control form-control-sm')}}</td>
+        <td>
+
+          <button type="submit" class="btn btn-outline-primary btn-sm">Submit</button>
+        </td>
+
+
+
+        </td>
+      </tr>
+
+    </table>
+  </form>
+  <!-- media / format cards -->
+  <div class="items linkfnt align-items-start">
+
+    {% if media %}
+    {% for row in media %}
+    <div class="item card linkfnt shadow p-3 mb-5 bg-body rounded">
+      <div class="card-header text-white text-uppercase fs-7" style="background-color: #09131b;">
+        {{row.name}} 
+        {% if current_user.username=='nirat' %}
+        <a href="{{url_for('mediadelete',id=row.id)}}"
+          onclick="return confirm('Are you sure you want to delete this media?')" style="float: right;">
+          <button type="button" data-bs-toggle="tooltip" data-bs-placement="right" title="Delete Media: {{ row.name }}"
+            class="btn btn-danger btn-sm ">
+            <i class="bi bi-trash3-fill"></i>
+          </button></a>
+          {%endif%}
+      </div>
+
+      <div class="card-body">
+
+        {% for child in row.formats %}
+
+
+        {{ child.name }}
+        {% if current_user.username=='nirat' %}
+        <a href="{{url_for('formatdelete',id=child.id)}}"
+          onclick="return confirm('Are you sure you want to delete this format?')" style="float: right;">
+          <button type="button" data-bs-toggle="tooltip" data-bs-placement="right"
+            title="Delete Format: {{ child.name }}" class="btn btn-outline-danger btn-sm">
+            <i class="bi bi-trash3-fill"></i>
+          </button></a>
+          {%endif%}
+        <hr>
+
+        {% endfor %}
+
+
+
+      </div>
+
+    </div>
+
+
+
+    {%endfor%}
+    {%endif%}
+  </div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

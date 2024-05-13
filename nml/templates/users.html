@@ -1,0 +1,186 @@
+{% extends 'layouts.html' %}
+{% set active_page = "users" %}
+
+{%block results%}
+
+<span class="badge text-bg-dark" style="padding: 5px;" data-bs-toggle="tooltip" data-bs-placement="right"
+  title="DB Emails Enabled"><i class="bi bi-envelope-check-fill"> {{email_users}} </i></span>
+<span class="badge text-bg-success" style="padding: 5px;" data-bs-toggle="tooltip" data-bs-placement="right"
+  title="User Active"><i class="bi bi-person-check-fill"> {{active_users}} </i></span>
+<span class="badge text-bg-warning" style="padding: 5px;" data-bs-toggle="tooltip" data-bs-placement="right"
+  title="User Disabled"> <i class="bi bi-person-fill-slash"> {{ total_users - active_users }} </i></span>
+<span class="badge text-bg-danger" style="padding: 5px;" data-bs-toggle="tooltip" data-bs-placement="right"
+  title="Admin Role"><i class="bi bi-asterisk"></i> {{admin_users}}
+</span>
+
+
+
+{%endblock results%}
+
+{% block content %}
+
+<div class="row">
+
+  <div class="col col-sm">
+    {% if user_list %}
+    <table class="table table-striped table-hover linkfnt shadow-sm p-3 mb-5 bg-body rounded">
+      <tr>
+        <th class="col">Roles</th>
+        <th class="col">Username</th>
+        <th class="col">Full Name</th>
+        <th class="col">Email ID</th>
+
+        {% if current_user.is_admin == True %}
+        <th colspan="2">Action</th>
+        {%endif%}
+      </tr>
+      {% for user in user_list %}
+      <tr>
+        <td>
+          {% if user.activestate == False %}
+          <span class="badge text-bg-success" style="padding: 5px;" data-bs-toggle="tooltip" data-bs-placement="top"
+            title="User Active"><i class="bi bi-person-check-fill"></i></span>
+          {%else%}
+          <span class="badge text-bg-warning" style="padding: 5px;" data-bs-toggle="tooltip" data-bs-placement="top"
+            title="User Disabled"> <i class="bi bi-person-fill-slash"></i></span>
+          {%endif%}
+
+          {% if user.db_notify ==True %}
+          <span class="badge text-bg-dark" style="padding: 5px;" data-bs-toggle="tooltip" data-bs-placement="top"
+            title="DB Emails Enabled"><i class="bi bi-envelope-check-fill"></i></span>
+          {%endif%}
+          {% if user.is_admin == True %}
+          <span class="badge text-bg-danger" style="padding: 5px;" data-bs-toggle="tooltip" data-bs-placement="top"
+            title="Admin Role"><i class="bi bi-asterisk"></i></span>
+          {%endif%}
+
+        </td>
+        <td> {{ user['username'] }}
+          <span class="badge badge-pill bg-info text-dark" data-bs-toggle="tooltip" data-bs-placement="right"
+            title="Records Entered">
+            {{ record_counts.get(user.username, 0) }}</span>
+        </td>
+        <td> {{ user['fullname'] }}</td>
+        <td>{{ user['email'] }}</td>
+        <!--  <a href="mailto:{{ user['email'] }}"></a></td> -->
+        {% if current_user.is_admin == True %}
+        <td>
+
+          <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+            <a href="{{url_for('edit',id=user.id)}}">
+              <button type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Update Profile"
+                class="btn btn-outline-info btn-sm">
+                <i class="bi bi-person-lines-fill"></i>
+              </button></a>
+
+            {% if not current_user.username==user.username and user.username != 'admin' %}
+            <a href="{{url_for('userdelete',id=user.id)}}"
+              onclick="return confirm('Are you sure you want to delete this entry?')">
+              <button type="button" data-bs-toggle="tooltip" data-bs-placement="right" title="Remove User"
+                class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-person-dash"></i>
+              </button></a>
+            {%endif%}
+
+          </div>
+        </td>
+        {%endif%}
+      </tr>
+      {% endfor %}
+    </table>
+    {% endif %}
+
+
+  </div>
+
+
+  <div class="col col-lg-2 linkfnt shadow p-3 mb-5 bg-body rounded">
+    {% if current_user.is_admin == True %}
+    <strong>Add New User </strong>
+    <form method="POST" action="/users">
+      {{ form.csrf_token }}
+
+      <div class="mb-3">
+        {{ form.username.label(class='form-control-label') }}
+        {% if form.username.errors %}
+        {{ form.username(class='form-control form-control-sm is-invalid')}}
+        {% for error in form.username.errors %}
+        <span>{{error}}</span>
+        {%endfor%}
+        {%else%}
+        {{ form.username(class='form-control form-control-sm') }}
+        {% endif %}
+      </div>
+      <div class="mb-3">
+        {{ form.fullname.label(class='form-control-label') }}
+        {% if form.fullname.errors %}
+        {{ form.fullname(class='form-control form-control-sm is-invalid')}}
+        {% for error in form.fullname.errors %}
+        <span>{{error}}</span>
+        {%endfor%}
+        {%else%}
+        {{ form.fullname(class='form-control form-control-sm') }}
+        {% endif %}
+      </div>
+      <div class="mb-3">
+        {{ form.email.label(class='form-control-label') }}
+        {% if form.email.errors %}
+        {{ form.email(class='form-control form-control-sm is-invalid')}}
+        {% for error in form.email.errors %}
+        <span>{{error}}</span>
+        {%endfor%}
+        {%else%}
+        {{ form.email(class='form-control form-control-sm') }}
+        {% endif %}
+      </div>
+      <div class="mb-3">
+        {{ form.password.label(class='form-control-label') }}
+        {% if form.password.errors %}
+        {{ form.password(class='form-control form-control-sm is-invalid')}}
+        {% for error in form.password.errors %}
+        <span>{{error}}</span>
+        {%endfor%}
+        {%else%}
+        {{ form.password(class='form-control form-control-sm') }}
+        {% endif %}
+      </div>
+      <div class="mb-3">
+        {{ form.confirm_password.label(class='form-control-label') }}
+        {% if form.confirm_password.errors %}
+        {{ form.confirm_password(class='form-control form-control-sm is-invalid')}}
+        {% for error in form.confirm_password.errors %}
+        <span>{{error}}</span>
+        {%endfor%}
+        {%else%}
+        {{ form.confirm_password(class='form-control form-control-sm') }}
+        {% endif %}
+      </div>
+      <div class="mb-3">
+        <div class="form-check form-switch">
+
+          {{ form.is_admin(class_="form-check-input")|safe }} {{ form.is_admin.label|safe }}
+
+        </div>
+      </div>
+
+      <div class="mb-3">
+
+
+        <div class="form-check form-switch">
+
+          {{ form.email_notify(class_="form-check-input")|safe }} {{ form.email_notify.label|safe }}
+
+        </div>
+
+      </div>
+      {{form.submit(class='btn btn btn-sm btn-primary')}}
+    </form>
+    {%endif%}
+
+
+  </div>
+
+</div>
+
+
+{% endblock %}

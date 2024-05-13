@@ -1,0 +1,213 @@
+
+{% extends 'layoutsd.html' %}
+{% set active_page = "dashboard" %}
+
+{%block pagination%}
+{%if current_user.is_admin==True %}
+<!-- {{current_user.is_active}} -->
+{%endif%}
+{%endblock pagination%}
+{%block results%}
+<span style="float: right;">
+  <p class="linkfnt "> 
+    {% for media_name, count in media_count_dict.items()%}
+        <button type="button" class="btn btn-sm btn-dark position-relative">
+        {{media_name}} 
+         <span class="badge bg-success rounded-pill" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Total {{media_name}} - {{count.percentage}}"
+         data-bs-custom-class="custom-tooltip">
+        {{count.count}} 
+      </span>
+      </button>
+    {%endfor%}
+    &hairsp;
+        <span style="float: right;">
+             
+            <button type="button" class="btn btn-sm btn-dark position-relative">
+            Record Companies
+             <span class="badge bg-success rounded-pill" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Total Record Companies"
+             data-bs-custom-class="custom-tooltip">
+            {{get_companies}}
+            
+          </span>
+          
+    
+          </button>
+          <button type="button" class="btn btn-sm btn-dark position-relative">
+            Artists
+             <span class="badge bg-success rounded-pill" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Total Artists"
+             data-bs-custom-class="custom-tooltip">
+            {{unique_artist_count}}
+          </span>
+</span>
+
+
+{%endblock results%}
+{% block content %}
+<style>
+  .items {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .item {
+    height: 100%;
+    margin: 4px;
+
+    width: 100%;
+    max-width: calc(50% - 8px);
+  }
+</style>
+
+
+
+<div class="row">
+  
+
+  <div class="col-md-14 table-responsive-sm">
+    <span class="h10"><strong>COLLECTIONS</strong> </span>
+     &hairsp;
+        
+    <table
+      class="table table-sm table-bordered table-striped linkfnt table align-middle table caption-bottom shadow-sm p-3 mb-5 bg-body rounded">
+      <caption>
+        {%if last_entry %}
+        Last Entered Record: <mark>{{last_entry.date_added.strftime("%-d %B %Y")}}</mark>
+        by
+        <mark>{{last_entry.user.fullname|title}}</mark>
+        {%endif%}
+
+      </caption>
+      <thead>
+        <tr>
+
+          <td> <span class="h7"><strong> Total Records: </strong></span><span class="badge bg-dark rounded-pill"
+              data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Total Collections"
+              data-bs-custom-class="custom-tooltip">{{ collectioncount }}</span>
+              {%if totald >0 %}
+              <span class="text-dark badge rounded-pill bg-warning" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Disabled Collections"
+              data-bs-custom-class="custom-tooltip">
+                {{totald}}
+                <span class="visually-hidden">unread messages</span>
+                {%endif%}
+              </span>
+          </td>
+
+
+
+          {% for format,format_id in all_formats %}
+          <td class="text-center "><strong>{{ format_totals[format] }}</strong></td>
+          {% endfor %}
+
+        </tr>
+        <tr>
+          <th class="text-center">Contributors <span class="badge bg-secondary rounded-pill ">{{ collector_count }}</span></th>
+          {% for format, format_id in all_formats %}
+
+          <th class="text-center"><a class="fs-10 "
+              href="{{ url_for('listbyformat', keys=format_id) }}">{{ format }}</a></th>
+          {% endfor %}
+
+        </tr>
+
+      </thead>
+      <tbody>
+        {% for collector, formats in formats_dict.items() %}
+        <tr>
+          <td>
+
+            <a class="fs-10 link-dark"
+              href="{{ url_for('listbycollector',contributor_id=formats.collector_id,format_id=0) }}">
+              {{ collector }}</a>
+
+            <span class="badge badge-pill bg-info text-dark" data-bs-toggle="tooltip" data-bs-placement="right"
+              title="">
+              {{ counts[collector]['total_count'] }}</span>
+
+              {%if drecord_counts.get(collector,0) %}
+              <span class="badge badge-pill bg-warning text-dark" data-bs-toggle="tooltip" data-bs-placement="right"
+              title="Disabled Collections">{{ drecord_counts.get(collector,0) }}</span>
+              {%endif%}
+
+          </td>
+          {% for format, format_id in all_formats %}
+          <td class="text-center">
+            {% if format in formats %}
+            <a
+              href="{{ url_for('listbycollector',contributor_id=formats.collector_id,format_id=format_id) }}">{{
+              formats[format] }}</a>
+            {% else %}
+            &nbsp;
+            {% endif %}
+          </td>
+          {% endfor %}
+
+        </tr>
+        {% endfor %}
+
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col-md-4 table-responsive-sm">
+    <span class="h10"><strong>PUBLICATIONS</strong> </span>
+    <span style="float: right;">
+             
+      <button type="button" class="btn btn-sm btn-dark position-relative">
+      Books
+       <span class="badge bg-success rounded-pill" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Total Publications"
+       data-bs-custom-class="custom-tooltip">
+      {{get_publications}}
+      
+    </span>
+    <span class="badge bg-secondary rounded-pill" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Double Copies"
+       data-bs-custom-class="custom-tooltip">
+      {{double_copy}}
+      
+    </span>
+
+    </button>
+</span> 
+    <table
+      class="table table-sm table-bordered table-striped linkfnt table align-middle table caption-bottom shadow-sm p-3 mb-5 bg-body rounded">
+      <caption>
+        {%if last_entryp %}
+        Last Entered Record: <mark>{{last_entryp.date_added.strftime("%-d %B %Y")}}</mark>
+        
+        {%endif%}
+
+      </caption>
+      <thead>
+        <tr>
+
+          <td> <span class="h7"><strong> Libraries: </strong></span><span class="badge bg-secondary rounded-pill"
+              data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Total Libraries"
+              data-bs-custom-class="custom-tooltip">{{ total_libraries }}</span>
+          </td>
+          </tr>
+          </thead>
+        
+        <tbody>
+          {% for libid, library_name,  record_count in library_counts %}
+          <tr>
+            <td>
+          <a class="fs-10 link-dark" href="{{url_for('libpublications',keys=libid)}}"> 
+          {{library_name}}</a> 
+          <span class="badge badge-pill bg-info text-dark" data-bs-toggle="tooltip" data-bs-placement="right"
+          title="">
+          {{record_count}}</span>
+          
+        </td>
+          </tr>
+          {%endfor%}
+          </tbody>
+    </table>
+
+</div>
+
+
+
+
+{% endblock %}
