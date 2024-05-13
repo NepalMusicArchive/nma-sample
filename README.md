@@ -9,9 +9,9 @@
 - Install the requirements using pip
 - start the app:run
 
-Login Details: 
-	- username: admin
-	- password: @rch1V32024#@
+## Login Details: 
+- username: admin
+- password: @rch1V32024#@
 
 ##for running in docker
 
