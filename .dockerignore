@@ -13,14 +13,14 @@ requirements.txt.old
 deploy.sh
 nml/static/dbbackup/
 nml/.env
-nml/static/uploads/*.jpg
-nml/static/uploads/*.png
-nml/static/uploads/timeline/*.png
-nml/static/uploads/timeline/*.jpg
-nml/static/uploads/publication/*.jpg
-nml/static/uploads/publication/*.png
-nml/static/timeline/*.png
-nml/static/uploads/*.jpg
+# nml/static/uploads/*.jpg
+# nml/static/uploads/*.png
+# nml/static/uploads/timeline/*.png
+# nml/static/uploads/timeline/*.jpg
+# nml/static/uploads/publication/*.jpg
+# nml/static/uploads/publication/*.png
+# nml/static/timeline/*.png
+# nml/static/uploads/*.jpg
 nml/static/music/*.mp3
 *.db
 */*.db
